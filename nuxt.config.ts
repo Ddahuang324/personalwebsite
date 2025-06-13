@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     }
   },
   app: {
-    baseURL: '/personalwebsite/', // 替换为你的仓库名
+    baseURL: '/DahuangWeb/', // 替换为你的仓库名
     buildAssetsDir: 'assets'
   },
   ssr: false // 禁用服务端渲染，启用静态生成
