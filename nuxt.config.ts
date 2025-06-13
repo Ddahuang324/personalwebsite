@@ -18,12 +18,12 @@ export default defineNuxtConfig({
   // GitHub Pages 部署配置
   nitro: {
     prerender: {
-      routes: ['/sitemap.xml']
+      routes: ['/sitemap.xml', '/', '/developer', '/artist', '/musician', '/lifestyle', '/study', '/learning/cpp']
     }
   },
   app: {
     baseURL: '/DahuangWeb/', // 替换为你的仓库名
     buildAssetsDir: 'assets'
   },
-  ssr: false // 禁用服务端渲染，启用静态生成
+  ssr: false // 禁用服务端渲染以支持静态生成
 })
