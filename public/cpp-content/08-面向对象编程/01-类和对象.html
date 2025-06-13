@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>类和对象</title>
+</head>
+<body>
+    <h1>类和对象</h1>
+    
+    <h2>什么是类</h2>
+    <p>类是C++中面向对象编程的基础。类是一个用户定义的数据类型，它将数据和操作数据的函数封装在一起。</p>
+    
+    <h2>类的定义</h2>
+    <pre><code>class Rectangle {
+private:
+    double width;
+    double height;
+    
+public:
+    // 构造函数
+    Rectangle(double w, double h) : width(w), height(h) {}
+    
+    // 成员函数
+    double getArea() {
+        return width * height;
+    }
+    
+    double getPerimeter() {
+        return 2 * (width + height);
+    }
+    
+    // 访问器函数
+    double getWidth() const { return width; }
+    double getHeight() const { return height; }
+    
+    // 修改器函数
+    void setWidth(double w) { width = w; }
+    void setHeight(double h) { height = h; }
+};</code></pre>
+    
+    <h2>对象的创建和使用</h2>
+    <pre><code>int main() {
+    // 创建对象
+    Rectangle rect(5.0, 3.0);
+    
+    // 使用对象的方法
+    std::cout &lt;&lt; "面积: " &lt;&lt; rect.getArea() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "周长: " &lt;&lt; rect.getPerimeter() &lt;&lt; std::endl;
+    
+    // 修改对象的属性
+    rect.setWidth(10.0);
+    std::cout &lt;&lt; "新面积: " &lt;&lt; rect.getArea() &lt;&lt; std::endl;
+    
+    return 0;
+}</code></pre>
+    
+    <h2>访问控制</h2>
+    <table>
+        <tr>
+            <th>访问修饰符</th>
+            <th>说明</th>
+        </tr>
+        <tr>
+            <td>public</td>
+            <td>公有成员，可以在类外部访问</td>
+        </tr>
+        <tr>
+            <td>private</td>
+            <td>私有成员，只能在类内部访问</td>
+        </tr>
+        <tr>
+            <td>protected</td>
+            <td>保护成员，可以在类内部和派生类中访问</td>
+        </tr>
+    </table>
+    
+    <h2>构造函数和析构函数</h2>
+    <ul>
+        <li><strong>构造函数</strong>：在对象创建时自动调用，用于初始化对象</li>
+        <li><strong>析构函数</strong>：在对象销毁时自动调用，用于清理资源</li>
+    </ul>
+    
+    <pre><code>class MyClass {
+public:
+    // 构造函数
+    MyClass() {
+        std::cout &lt;&lt; "对象被创建" &lt;&lt; std::endl;
+    }
+    
+    // 析构函数
+    ~MyClass() {
+        std::cout &lt;&lt; "对象被销毁" &lt;&lt; std::endl;
+    }
+};</code></pre>
+</body>
+</html>

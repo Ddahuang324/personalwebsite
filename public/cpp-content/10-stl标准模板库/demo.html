@@ -1,0 +1,3921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二、STL序列式容器</title>
+    <style>
+        /* --- Reset & Base Styles --- */
+        :root {
+            --bg-color: #eaf2ef;
+            --text-color: #4a4a4a;
+            --header-color: #2c3e50;
+            --accent-color: #3498db;
+            --accent-hover-color: #2980b9;
+            --nav-bg: #ecf0f1;
+            --nav-text: #7f8c8d;
+            --nav-active-bg: #bdc3c7;
+            --nav-active-text: #2c3e50;
+            --border-color: #dcdcdc;
+            --code-bg: #2d2d2d;
+            --code-text: #cccccc;
+            --callout-info-bg: #d9edf7;
+            --callout-info-border: #bce8f1;
+            --callout-warn-bg: #fcf8e3;
+            --callout-warn-border: #faebcc;
+            --callout-note-bg: #dff0d8;
+            --callout-note-border: #d6e9c6;
+            --callout-question-bg: #f2ebf9;
+            --callout-question-border: #e0ccf6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            line-height: 1.7;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* --- Layout --- */
+        #sidebar {
+            width: 280px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--nav-bg);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        main {
+            margin-left: 280px;
+            padding: 20px 40px;
+            width: calc(100% - 280px - 80px); /* Adjusted for padding */
+            max-width: 100%; /* Allow content to fill available space */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        /* --- Sidebar Navigation --- */
+        #sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #sidebar-nav li a {
+            display: block;
+            text-decoration: none;
+            color: var(--nav-text);
+            padding: 8px 25px;
+            transition: all 0.2s ease-in-out;
+            border-left: 3px solid transparent;
+        }
+        #sidebar-nav li a:hover {
+            background-color: var(--nav-active-bg);
+            color: var(--accent-hover-color);
+        }
+        #sidebar-nav li a.active {
+            color: var(--nav-active-text);
+            background-color: var(--nav-active-bg);
+            border-left-color: var(--accent-color);
+            font-weight: 600;
+        }
+        #sidebar-nav .nav-h2 { font-size: 1em; font-weight: 600; padding-left: 25px; }
+        #sidebar-nav .nav-h3 { font-size: 0.9em; padding-left: 40px; }
+
+
+        /* --- Content Typography --- */
+        h1, h2, h3 {
+            color: var(--header-color);
+            font-weight: 700;
+            margin-top: 2em;
+            margin-bottom: 1em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid var(--border-color);
+        }
+        h1 { font-size: 2.5em; }
+        h2 { font-size: 2em; }
+        h3 { font-size: 1.5em; border-bottom: none; }
+        h4 { 
+            font-size: 1.2em; 
+            color: var(--header-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+
+        p, ul, ol {
+            margin-bottom: 1em;
+        }
+        
+        strong, b {
+            font-weight: 600;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Code Blocks --- */
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.2em;
+            border-radius: 8px;
+            overflow-x: auto;
+            position: relative;
+        }
+        code {
+            font-family: "Fira Code", "JetBrains Mono", "Courier New", monospace;
+            font-size: 0.95em;
+        }
+        p > code, li > code {
+            background-color: #e9ecef;
+            color: #c7254e;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4a505c;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        pre:hover .copy-btn {
+            opacity: 1;
+        }
+        .copy-btn:hover {
+            background: #6b7280;
+        }
+
+
+        /* --- Tables --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: var(--nav-bg);
+            font-weight: 600;
+        }
+        tbody tr:nth-child(even) {
+            background-color: var(--nav-bg);
+        }
+        
+        /* --- Graphviz Diagrams --- */
+        .graphviz {
+            text-align: center;
+            margin: 2em 0;
+            padding: 1em;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .graphviz svg {
+            max-width: 100%;
+        }
+
+        /* --- Callout Boxes --- */
+        .callout {
+            padding: 15px 20px;
+            margin: 1.5em 0;
+            border-radius: 8px;
+            border-left: 5px solid;
+        }
+        .callout h4 {
+            margin-top: 0;
+            border-bottom: none;
+        }
+        .callout-warn { background-color: var(--callout-warn-bg); border-color: var(--callout-warn-border); }
+        .callout-question { background-color: var(--callout-question-bg); border-color: var(--callout-question-border); }
+        .callout-note { background-color: var(--callout-note-bg); border-color: var(--callout-note-border); }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) {
+            body {
+                flex-direction: column;
+            }
+            #sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                max-height: 40vh; /* Make sidebar scrollable on small screens */
+            }
+            main {
+                margin-left: 0;
+                width: 100%; /* Ensure full width on smaller screens */
+                padding: 20px;
+                box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            }
+        }
+    </style>
+    <!-- Prism.js for code highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css">
+</head>
+<body>
+
+    <nav id="sidebar">
+        <ul id="sidebar-nav">
+            <!-- Navigation will be generated here by JavaScript -->
+        </ul>
+    </nav>
+
+    <main id="content">
+        <h1 id="二-stl序列式容器-">二、STL序列式容器🌟</h1>
+        <h3 id="学习目标">学习目标</h3>
+        <p>学完本章后，您将能够：</p>
+        <ul>
+            <li><strong>理解</strong> C++ STL 中序列式容器的核心概念与底层实现原理。</li>
+            <li><strong>掌握</strong> <code>array</code>, <code>vector</code>, <code>deque</code>, <code>list</code>, <code>forward_list</code> 等常用序列式容器的创建、元素访问、添加和删除等基本操作。</li>
+            <li><strong>精通</strong> 迭代器在遍历和操作序列式容器中的核心作用与方法。</li>
+            <li><strong>学会</strong> 根据不同应用场景（如性能、内存、功能需求）选择最合适的序列式容器。</li>
+            <li><strong>理解</strong> <code>vector</code> 容量管理的机制，并学会如何避免不必要的性能开销。</li>
+            <li><strong>了解</strong> <code>vector&lt;bool&gt;</code> 的特殊性，并知晓其替代方案。</li>
+        </ul>
+        <hr>
+        <h1 id="2.1-c-stl-容器与迭代器基础">2.1 C++ STL 容器与迭代器基础</h1>
+        <blockquote></blockquote>
+        <h2 id="2.1.1-容器-container-是什么-"><code>2.1.1 容器（Container）是什么？</code></h2>
+        <blockquote>
+            <p>2.1.1</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>在C++中，“容器”是一种用于组织和存储数据集合的类模板。简单来说，它就像一个“盒子”，你可以把数据（比如数字、字符串或者自定义的对象）放进去，并能方便地进行管理。</p>
+        <p>STL（Standard Template Library，标准模板库）提供了多种容器，每种容器都基于特定的数据结构实现，因此它们在存取效率、内存使用和功能上各有优缺点。这使得我们可以根据具体的应用场景，选择最高效、最合适的“盒子”。</p>
+        <p>STL 容器主要分为三类 1：</p>
+        <ol>
+            <li><strong>序列式容器 (Sequence containers)</strong>：
+                <ul>
+                    <li>元素在容器中的位置与元素的值无关，而是由插入时的位置决定 2。</li>
+                    <li>它的行为类似于普通数组，元素是线性排列的。</li>
+                    <li>主要包括： <code>array</code>, <code>vector</code>, <code>deque</code>, <code>list</code>, <code>forward_list</code>。</li>
+                </ul>
+            </li>
+            <li><strong>关联式容器 (Associative containers)</strong>：
+                <ul>
+                    <li>这类容器分为“排序容器”和“哈希容器”（也称无序容器）。</li>
+                    <li><strong>排序容器 (Sorted associative containers)</strong>：元素会根据其键值（key）自动排序。这使得它们在查找、删除和插入操作上通常非常高效 3。主要包括： <code>set</code>, <code>multiset</code>, <code>map</code>, <code>multimap</code>。</li>
+                    <li><strong>哈希容器 (Hashed containers / Unordered associative containers)</strong>：C++11 新增的容器，元素的位置由其哈希值决定，内部是无序的。它们在查找特定元素时通常比排序容器更快 4。主要包括： <code>unordered_set</code>, <code>unordered_multiset</code>, <code>unordered_map</code>, <code>unordered_multimap</code>。</li>
+                </ul>
+            </li>
+            <li><strong>容器适配器 (Container adaptors)</strong>：
+                <ul>
+                    <li>它们并非独立的容器，而是对序列式容器的接口进行了封装，使其表现出特定的行为（如栈的“后进先出”）。</li>
+                    <li>主要包括： <code>stack</code>, <code>queue</code>, <code>priority_queue</code>。</li>
+                </ul>
+            </li>
+        </ol>
+        <p>本章将重点讲解序列式容器。</p>
+        <h4>【图示（概念）】</h4>
+        <div class="graphviz">
+<pre><code>digraph STL_Containers {
+    rankdir=TB;
+    node [shape=box, style=rounded, fontname="Arial"];
+
+    STL_Containers [label="STL 容器"];
+
+    Sequential [label="序列式容器\n(array, vector, deque, list, forward_list)"];
+    Associative [label="关联式容器"];
+    Adaptors [label="容器适配器\n(stack, queue, priority_queue)"];
+
+    Sorted [label="排序容器\n(map, set, multimap, multiset)"];
+    Hashed [label="哈希容器 (无序容器)\n(C++11 新增)"];
+
+    STL_Containers -> Sequential;
+    STL_Containers -> Associative;
+    STL_Containers -> Adaptors;
+
+    Associative -> Sorted;
+    Associative -> Hashed;
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>哈希容器是在 C++11 标准中才被正式纳入的。在此之前，不同的编译器或库可能会提供非标准的实现（如 <code>hash_map</code>） 5。为了保证代码的可移植性，建议使用 C++11 及以上标准。</li>
+                <li>选择何种容器，直接影响到程序的性能和开发效率，因此理解每种容器的特性至关重要。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 什么时候该用序列式容器，什么时候该用关联式容器？</li>
+                <li><strong>答：</strong> 当你需要一个按照插入顺序来维护的元素集合，并经常按位置访问元素时，应选择序列式容器。当你需要快速根据一个“键”来查找、插入或删除元素，并且不关心元素的物理存储顺序时，关联式容器是更好的选择。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <p>容器是 C++ 编程中管理数据集合的基础工具。无论是存储用户列表、处理任务队列，还是建立数据索引，都离不开容器。它们极大地提高了代码的复用性和开发效率。</p>
+        </div>
+        <hr>
+        <h2 id="2.1.2-迭代器-iterator-是什么-"><code>2.1.2 迭代器（Iterator）是什么？</code></h2>
+        <blockquote>
+            <p>2.1.2</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>迭代器（Iterator）可以理解为一个“智能指针”，它指向容器中的某个元素。 6 它的核心作用是提供一种统一的、访问容器中各种元素的方式，而无需暴露容器底层的具体数据结构。 7</p>
+        <p>想象一下，无论你用的是数组（ <code>vector</code>）、链表（ <code>list</code>）还是其他结构的容器，你都希望用一套统一的动作（比如“移动到下一个元素”、“获取当前元素的值”）来遍历它们。迭代器就是实现这个目标的“中间人”或“胶合剂”，它连接了算法和容器。算法通过迭代器来操作容器中的数据，而不用关心容器到底是如何存储这些数据的。</p>
+        <h3 id="2.1.2.1-迭代器的种类"><code>2.1.2.1 迭代器的种类</code></h3>
+        <blockquote>
+            <p>2.1.2.1</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>STL 根据迭代器功能强弱，将其分为 5 个类别。功能越强的迭代器，支持的操作就越多。 8</p>
+        <ol>
+            <li><strong>输入迭代器 (Input Iterator)</strong>：
+                <ul>
+                    <li>最弱的迭代器，只支持向前移动和读取元素。</li>
+                    <li>它只能遍历序列一次，像读取输入流一样。</li>
+                </ul>
+            </li>
+            <li><strong>输出迭代器 (Output Iterator)</strong>：
+                <ul>
+                    <li>同样非常受限，只支持向前移动和写入元素。</li>
+                    <li>也只能遍历序列一次，像写入到输出流。</li>
+                </ul>
+            </li>
+            <li><strong>前向迭代器 (Forward Iterator)</strong>：
+                <ul>
+                    <li>结合了输入和输出迭代器的基本功能，可以多次读写同一个元素，并且可以多次遍历序列。 9</li>
+                    <li>支持 <code>++</code> 向前移动。</li>
+                </ul>
+            </li>
+            <li><strong>双向迭代器 (Bidirectional Iterator)</strong>：
+                <ul>
+                    <li>在前向迭代器的基础上，增加了向后移动的功能。 10</li>
+                    <li>支持 <code>--</code> 向后移动。</li>
+                </ul>
+            </li>
+            <li><strong>随机访问迭代器 (Random Access Iterator)</strong>：
+                <ul>
+                    <li>功能最强的迭代器，拥有双向迭代器的所有功能。 11</li>
+                    <li>额外支持指针算术运算，比如 <code>p+i</code>、 <code>p-i</code>、 <code>p[i]</code>，可以直接跳到任意元素。 12</li>
+                </ul>
+            </li>
+        </ol>
+        <h4>【图示（概念）】</h4>
+        <p>这是一个展示迭代器功能强弱层次的示意图：</p>
+        <div class="graphviz">
+<pre><code>digraph Iterator_Hierarchy {
+    rankdir=LR;
+    node [shape=box, style=rounded, fontname="Arial"];
+
+    input [label="输入迭代器\n(只读, ++)", style=filled, fillcolor=lightblue];
+    output [label="输出迭代器\n(只写, ++)", style=filled, fillcolor=lightcoral];
+    forward [label="前向迭代器\n(读写, ++)", style=filled, fillcolor=green];
+    bidirectional [label="双向迭代器\n(读写, ++, --)", style=filled, fillcolor=gold];
+    random_access [label="随机访问迭代器\n(读写, ++, --, +, -, [])", style=filled, fillcolor=orchid];
+
+    input -> forward;
+    output -> forward;
+    forward -> bidirectional;
+    bidirectional -> random_access;
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>不同的容器支持不同类型的迭代器。例如 <code>vector</code> 支持随机访问迭代器，而 <code>list</code> 只支持双向迭代器。 13</li>
+                <li>容器适配器 <code>stack</code> 和 <code>queue</code> 不提供迭代器，因为它们限制了元素的访问方式。 14</li>
+                <li>算法会根据其需要指定最低级别的迭代器类型。例如， <code>sort()</code> 算法需要随机访问迭代器，因此它不能用于 <code>list</code>。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 为什么需要这么多类型的迭代器？</li>
+                <li><strong>答：</strong> 这是为了实现效率和泛型编程的平衡。一些数据结构（如链表）从根本上无法高效地支持随机访问，因此它们只提供双向迭代器。通过细分迭代器种类，STL 算法可以声明它所需要的“最低”功能要求。这样，一个只需要前向遍历的算法就可以同时用于 <code>vector</code> 和 <code>list</code>，而一个需要随机访问的算法（如 <code>sort</code>）就只能用于 <code>vector</code>，从而在编译时就能发现错误，保证了代码的正确性和效率。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <p>迭代器是泛型编程的基石，它使得 STL 中的算法（如 sort, find, copy）能够不依赖于具体容器的实现，从而可以应用于任何提供了相应类型迭代器的容器。</p>
+        </div>
+        <h3 id="2.1.2.2-迭代器的定义与使用"><code>2.1.2.2 迭代器的定义与使用</code></h3>
+        <blockquote>
+            <p>2.1.2.2</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>要使用迭代器，首先需要从一个具体的容器对象来获取。容器类通常提供 begin() 和 end() 这样的成员函数，begin() 返回一个指向容器第一个元素的迭代器，而 end() 返回一个指向容器“末尾之后”位置的迭代器（这是一个哨兵，不指向任何有效元素）。</p>
+        <h4>【语法】</h4>
+        <p>STL 中有四种常见的迭代器定义方式，以 vector 为例 15：</p>
+        <ul>
+            <li><strong>正向迭代器</strong>： <code>vector&lt;int&gt;::iterator it;</code>
+                <ul>
+                    <li>用于读写容器中的元素。</li>
+                </ul>
+            </li>
+            <li><strong>常量正向迭代器</strong>： <code>vector&lt;int&gt;::const_iterator it;</code>
+                <ul>
+                    <li>只能用于读取元素，不能修改。</li>
+                </ul>
+            </li>
+            <li><strong>反向迭代器</strong>： <code>vector&lt;int&gt;::reverse_iterator it;</code>
+                <ul>
+                    <li>用于反向遍历容器， <code>++</code> 操作会使其指向“前一个”元素。</li>
+                </ul>
+            </li>
+            <li><strong>常量反向迭代器</strong>： <code>vector&lt;int&gt;::const_reverse_iterator it;</code>
+                <ul>
+                    <li>用于反向读取元素，不能修改。</li>
+                </ul>
+            </li>
+        </ul>
+        <h4>【代码】</h4>
+        <p>下面的代码以 vector 为例，展示了如何定义和使用迭代器来遍历容器。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// 为了方便，这里我们使用了 vector 头文件
+using namespace std;
+
+int main() {
+    // 创建并初始化一个 vector 容器
+    vector&lt;int&gt; v{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    // --- 第一种遍历方法：使用普通 for 循环和下标 ---
+    cout &lt;&lt; "第一种遍历方法: ";
+    // size() 返回元素个数
+    for (int i = 0; i &lt; v.size(); ++i) {
+        // 像数组一样使用 vector 容器
+        cout &lt;&lt; v[i] &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+
+    // --- 第二种遍历方法：使用正向迭代器 ---
+    cout &lt;&lt; "第二种遍历方法: ";
+    // 创建一个正向迭代器
+    vector&lt;int&gt;::iterator it;
+    // v.begin() 指向第一个元素，v.end() 指向末尾之后
+    // 用 != 比较两个迭代器
+    for (it = v.begin(); it != v.end(); ++it) {
+        cout &lt;&lt; *it &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+
+    // --- 第三种遍历方法（C++11 及以上）：基于范围的 for 循环 ---
+    cout &lt;&lt; "第三种遍历方法: ";
+    for (int element : v) {
+        cout &lt;&lt; element &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>第一种遍历方法: 1 2 3 4 5 6 7 8 9 10
+第二种遍历方法: 1 2 3 4 5 6 7 8 9 10
+第三种遍历方法: 1 2 3 4 5 6 7 8 9 10
+</code></pre>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><strong>迭代器失效</strong>：这是一个非常重要的概念。当对容器进行某些操作时（例如，向 <code>vector</code> 中添加元素导致其重新分配内存），之前获取的迭代器可能会“失效”，即它们不再指向有效的内存位置。继续使用失效的迭代器会导致未定义的行为（通常是程序崩溃）。因此，在修改容器后，如果需要继续使用迭代器，最好重新获取它。</li>
+                <li><code>end()</code> 返回的迭代器不指向任何元素，不能对其进行解引用（ <code>*</code>）操作。它只用作循环的终止条件。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>iterator</code> 和 <code>const_iterator</code> 有什么区别？</li>
+                <li><strong>答：</strong> <code>iterator</code> 允许你通过它来修改所指向的元素的值（例如 <code>*it = 100;</code>），而 <code>const_iterator</code> 则不行，它只提供了对元素的只读访问。当你遍历一个 <code>const</code> 容器时，它的 <code>begin()</code> 和 <code>end()</code> 方法会自动返回 <code>const_iterator</code>。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <p>迭代器是 STL 的核心，其主要用途包括：</p>
+            <ul>
+                <li><strong>遍历容器</strong>：以统一的方式访问容器中的每一个元素。</li>
+                <li><strong>连接算法与容器</strong>：将容器中的一个或一段元素（一个范围，由一对迭代器表示）传递给 STL 算法进行处理。</li>
+                <li><strong>读写元素</strong>：通过解引用操作（ <code>*</code>）来读取或修改迭代器所指向的元素。</li>
+            </ul>
+        </div>
+        <hr>
+        <h1 id="2.2-array-容器">2.2 array 容器</h1>
+        <blockquote></blockquote>
+        <h2 id="2.2.1-array-静态的-升级版-普通数组"><code>2.2.1 array：静态的“升级版”普通数组</code></h2>
+        <blockquote>
+            <p>2.2.1</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::array 是 C++11 标准中新增的序列式容器。您可以把它看作是 C++ 普通数组的“升级版”或“封装版” 11。它将一个固定大小的静态数组包装在一个类中，从而赋予了它普通数组所不具备的诸多优秀特性。</p>
+        <p><code>std::array</code> 的核心特点是：</p>
+        <ol>
+            <li><strong>大小固定</strong>：一旦创建， <code>array</code> 容器的大小就不能再改变。这一点和 C 风格的静态数组完全一样。</li>
+            <li><strong>连续内存</strong>：与 C 风格数组一样， <code>array</code> 的元素存储在连续的内存空间中 2。这使得通过指针算术进行元素访问的效率非常高，并且可以与需要连续内存的 C 风格 API 兼容。</li>
+        </ol>
+        <p>相比于传统的 C 风格数组 <code>T arr[N];</code>， <code>std::array&lt;T, N&gt;</code> 的优势在于：</p>
+        <ul>
+            <li><strong>是真正的类</strong>：它是一个类模板的实例，拥有成员函数（如 <code>size()</code>, <code>at()</code>）和迭代器，可以像其他 STL 容器一样被操作。</li>
+            <li><strong>更安全</strong>：提供了 <code>at()</code> 成员函数，它会进行边界检查，如果访问越界会抛出异常，避免了传统数组越界访问导致的未定义行为 3。</li>
+            <li><strong>接口统一</strong>：提供了 <code>begin()</code>/ <code>end()</code> 等迭代器接口，可以无缝地配合 STL 算法库使用。</li>
+            <li><strong>不损失性能</strong>： <code>std::array</code> 的封装是零开销的，它的性能与同等大小的 C 风格数组完全相同。</li>
+        </ul>
+        <h4>【语法】</h4>
+        <p>要使用 array 容器，必须包含  头文件。</p>
+<pre><code class="language-cpp">#include &lt;array&gt;
+using namespace std; // 可选，为了方便
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>std::array 将 C 风格的裸数组包装在一个类结构中，提供了丰富的接口。</p>
+        <div class="graphviz">
+<pre><code>digraph Array_Concept {
+    rankdir=LR;
+    node [fontname="SimHei"];
+    subgraph cluster_0 {
+        label = "std::array<T, 5> a";
+        style=dashed;
+        a [shape=record, label="{ {<f0> a[0] | <f1> a[1] | <f2> a[2] | <f3> a[3] | <f4> a[4]} | {成员函数: begin(), end(), size(), at()...} }"];
+    }
+    label_node [shape=plaintext, label="将 C 风格数组封装为\n一个带有标准接口的类"];
+
+    c_array [label="T c_arr[5];\n(裸数组)"];
+    c_array -> label_node -> a;
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <p>array 容器的大小 N 必须是一个在编译时就能确定的常量表达式，不能是变量。 4</p>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 既然有了更灵活的 <code>vector</code>，为什么还需要 <code>array</code>？</li>
+                <li><strong>答：</strong> <code>array</code> 主要用于替代 C 风格的静态数组。当您确切知道需要一个固定大小的集合，并且希望数据分配在栈上（或作为类成员）以获得更高性能时， <code>array</code> 是完美的选择。它提供了 STL 容器的便利性和安全性，同时又没有 <code>vector</code> 的动态内存管理开销。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>作为 C 风格数组的安全、现代的替代品。</li>
+                <li>在性能要求高、且元素数量固定的场景中使用。</li>
+                <li>用于与需要连续数据块的底层 C 语言 API 进行交互。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.2.2-array-容器的创建与初始化"><code>2.2.2 array 容器的创建与初始化</code></h2>
+        <blockquote>
+            <p>2.2.2</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>创建 array 容器时，必须明确指定其存储的元素类型和大小。array 提供了多种初始化方式，可以满足不同的编程需求。</p>
+        <h4>【语法】</h4>
+        <ol>
+            <li>
+                <p><strong>默认初始化</strong>：</p>
+<pre><code class="language-cpp">std::array&lt;T, N&gt; arr;
+</code></pre>
+                <p>这会创建一个 <code>array</code> 容器，但其内部元素处于未初始化状态，它们的值是不确定的，就像 C 语言中未初始化的局部数组一样。 5</p>
+            </li>
+            <li>
+                <p><strong>值初始化（零初始化）</strong>：</p>
+<pre><code class="language-cpp">std::array&lt;T, N&gt; arr{}; // 或 arr = {};
+</code></pre>
+                <p>这会创建一个 <code>array</code>，并将其所有元素都初始化为该类型的默认值（对于数值类型是 <code>0</code>，对于指针是 <code>nullptr</code> 等）。 6 这是推荐的、更安全的方式。</p>
+            </li>
+            <li>
+                <p><strong>聚合初始化</strong>：</p>
+<pre><code class="language-cpp">std::array&lt;T, N&gt; arr = {v1, v2, v3, ...};
+</code></pre>
+                <p>使用初始化列表来为容器中的元素赋初值。如果初始化列表中的元素数量少于 <code>N</code>，剩余的元素将被值初始化（例如，初始化为0）。 7</p>
+            </li>
+        </ol>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;array&gt;
+#include &lt;string&gt;
+
+// 用于打印 array 内容的辅助函数
+template&lt;typename T, size_t N&gt;
+void print_array(const std::string& name, const std::array&lt;T, N&gt;& arr) {
+    std::cout &lt;&lt; name &lt;&lt; ": ";
+    for (const auto& element : arr) {
+        std::cout &lt;&lt; element &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+}
+
+int main() {
+    // 1. 默认初始化，元素值不确定
+    std::array&lt;int, 5&gt; arr1;
+    // 注意：直接打印 arr1 的内容可能会显示随机值
+
+    // 2. 值初始化，所有元素为 0
+    std::array&lt;int, 5&gt; arr2{};
+    print_array("arr2 (值初始化)", arr2);
+
+    // 3. 聚合初始化，提供所有元素
+    std::array&lt;int, 5&gt; arr3 = {11, 22, 33, 44, 55};
+    print_array("arr3 (聚合初始化)", arr3);
+
+    // 4. 初始化列表长度小于容器大小
+    std::array&lt;double, 10&gt; values = {0.5, 1.0, 1.5, 2.0};
+    print_array("values (部分初始化)", values);
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>arr2 (值初始化): 0 0 0 0 0
+arr3 (聚合初始化): 11 22 33 44 55
+values (部分初始化): 0.5 1 1.5 2 0 0 0 0 0 0
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>下图展示了当初始化列表元素数量小于容器大小时，array 的内存状态。</p>
+        <div class="graphviz">
+<pre><code>digraph Array_Init {
+    node [shape=record, fontname="SimHei"];
+    arr [label="<f0> 0.5 | <f1> 1.0 | <f2> 1.5 | <f3> 2.0 | <f4> 0.0 | <f5> 0.0 | <f6> 0.0 | <f7> 0.0 | <f8> 0.0 | <f9> 0.0"];
+
+    subgraph cluster_init {
+        label="初始化列表提供的值";
+        style="filled";
+        fillcolor="green";
+        node[style=filled, fillcolor=green]
+        arr:f0; arr:f1; arr:f2; arr:f3;
+    }
+
+    subgraph cluster_default {
+        label="剩余部分被值初始化";
+        style="filled";
+        fillcolor="lightblue";
+        node[style=filled, fillcolor=lightblue]
+        arr:f4; arr:f5; arr:f6; arr:f7; arr:f8; arr:f9;
+    }
+
+    label_node [shape=plaintext, label="std::array<double, 10> values = {0.5, 1.0, 1.5, 2.0};"];
+    label_node -> arr [style=invis];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>array</code> 的大小是在编译期确定的，因此不能像 <code>vector</code> 那样在运行时动态改变大小。</li>
+                <li>使用 <code>{}</code> 进行值初始化是一种良好的编程习惯，可以有效避免使用未初始化的数据。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>array&lt;T, N&gt; arr;</code> 和 <code>array&lt;T, N&gt; arr{};</code> 到底有什么区别？</li>
+                <li><strong>答：</strong> 前者是<strong>默认初始化</strong>，如果 <code>arr</code> 是一个非静态局部变量，它的元素值将是未定义的（即内存中的垃圾值）。后者是<strong>值初始化</strong>，无论 <code>arr</code> 在哪里定义，它的所有元素都会被初始化为类型的默认值（如 <code>int</code> 的 <code>0</code>， <code>double</code> 的 <code>0.0</code>）。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>创建具有确定初始状态的定长数组。</li>
+                <li>利用聚合初始化，可以方便地用一组常量数据来初始化 <code>array</code>。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.2.3-array-容器的成员函数"><code>2.2.3 array 容器的成员函数</code></h2>
+        <blockquote>
+            <p>2.2.3</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::array 作为一个标准的 STL 容器，提供了一系列成员函数来方便地操作和查询其状态。这些函数使得 array 远比 C 风格数组更强大和易用。</p>
+        <h4>【语法】</h4>
+        <p>下表汇总了 array 的常用成员函数及其功能。</p>
+        <table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>成员函数</strong></td>
+<td><strong>功能描述</strong></td>
+</tr>
+<tr>
+<td><strong>迭代器</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><code>begin()</code>/ <code>cbegin()</code></td>
+<td>返回指向容器第一个元素的迭代器/常量迭代器。 8</td>
+</tr>
+<tr>
+<td><code>end()</code>/ <code>cend()</code></td>
+<td>返回指向容器末尾之后位置的迭代器/常量迭代器。 9</td>
+</tr>
+<tr>
+<td><code>rbegin()</code>/ <code>crbegin()</code></td>
+<td>返回指向容器最后一个元素的反向迭代器/常量反向迭代器。 10</td>
+</tr>
+<tr>
+<td><code>rend()</code>/ <code>crend()</code></td>
+<td>返回指向容器第一个元素之前位置的反向迭代器/常量反向迭代器。 11</td>
+</tr>
+<tr>
+<td><strong>容量</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><code>size()</code></td>
+<td>返回容器中元素的数量，其值总是等于模板参数 N。 12</td>
+</tr>
+<tr>
+<td><code>max_size()</code></td>
+<td>返回容器可容纳的最大元素数量，其值也总是等于模板参数 N。 13</td>
+</tr>
+<tr>
+<td><code>empty()</code></td>
+<td>判断容器是否为空，等同于 <code>size() == 0</code>，但可能效率更高。 14</td>
+</tr>
+<tr>
+<td><strong>元素访问</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><code>operator[]</code></td>
+<td>返回指定位置元素的引用，<strong>不进行边界检查</strong>。</td>
+</tr>
+<tr>
+<td><code>at(n)</code></td>
+<td>返回指定位置 n 处元素的引用，<strong>进行边界检查</strong>，如果 n 越界则抛出 <code>std::out_of_range</code> 异常。 15</td>
+</tr>
+<tr>
+<td><code>front()</code></td>
+<td>返回容器中第一个元素的引用，不适用于空容器。 16</td>
+</tr>
+<tr>
+<td><code>back()</code></td>
+<td>返回容器中最后一个元素的引用，不适用于空容器。 17</td>
+</tr>
+<tr>
+<td><code>data()</code></td>
+<td>返回指向容器首元素内存地址的指针，可用于和 C 风格 API 交互。 18</td>
+</tr>
+<tr>
+<td><strong>修改器</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><code>fill(val)</code></td>
+<td>将容器中的所有元素都赋值为 <code>val</code>。 19</td>
+</tr>
+<tr>
+<td><code>swap(other)</code></td>
+<td>交换两个 <code>array</code> 容器的内容，前提是它们的类型和大小都相同。 20</td>
+</tr>
+</tbody>
+</table>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;array&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::array&lt;int, 5&gt; values = {10, 20, 30, 40, 50};
+
+    // 容量相关
+    std::cout &lt;&lt; "Size: " &lt;&lt; values.size() &lt;&lt; std::endl;
+    if (!values.empty()) {
+        std::cout &lt;&lt; "Container is not empty." &lt;&lt; std::endl;
+    }
+
+    // 元素访问
+    std::cout &lt;&lt; "Element at index 2 (using at()): " &lt;&lt; values.at(2) &lt;&lt; std::endl;
+    std::cout &lt;&lt; "Element at index 3 (using operator[]): " &lt;&lt; values[3] &lt;&lt; std::endl;
+    std::cout &lt;&lt; "Front element: " &lt;&lt; values.front() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "Back element: " &lt;&lt; values.back() &lt;&lt; std::endl;
+
+    // 修改器
+    std::array&lt;int, 5&gt; other_values;
+    other_values.fill(100); // 将 other_values 的所有元素设置为 100
+
+    std::cout &lt;&lt; "Before swap, other_values[0]: " &lt;&lt; other_values[0] &lt;&lt; std::endl;
+    values.swap(other_values); // 交换 values 和 other_values 的内容
+    std::cout &lt;&lt; "After swap, values[0]: " &lt;&lt; values[0] &lt;&lt; std::endl;
+    std::cout &lt;&lt; "After swap, other_values[0]: " &lt;&lt; other_values[0] &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>Size: 5
+Container is not empty.
+Element at index 2 (using at()): 30
+Element at index 3 (using operator[]): 40
+Front element: 10
+Back element: 50
+Before swap, other_values[0]: 100
+After swap, values[0]: 100
+After swap, other_values[0]: 10
+</code></pre>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>访问元素时， <code>at()</code> 函数比 <code>[]</code> 运算符更安全。在不确定索引是否有效的情况下，应优先使用 <code>at()</code>。</li>
+                <li>对空容器调用 <code>front()</code> 或 <code>back()</code> 是未定义行为。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>array</code> 的 <code>size()</code> 和 <code>max_size()</code> 有什么区别？</li>
+                <li><strong>答：</strong> 对于 <code>std::array</code>， <code>size()</code> 和 <code>max_size()</code><strong>总是返回相同的值</strong>，即模板参数 <code>N</code>21。这与其他动态容器（如 <code>vector</code>）不同， <code>vector</code> 的 <code>size()</code> 是当前元素数量，而 <code>max_size()</code> 是理论上可容纳的最大数量。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li><code>size()</code>/ <code>**empty()**</code>：用于循环和条件判断，查询容器状态。</li>
+                <li><code>at()</code>/ <code>**[]**</code>：用于访问和修改单个元素。</li>
+                <li><code>front()</code>/ <code>**back()**</code>：用于快速访问首尾元素。</li>
+                <li><code>**fill()**</code>：用于快速将容器重置为统一状态。</li>
+                <li><code>**swap()**</code>：高效交换两个 <code>array</code> 的内容，其时间复杂度是线性的。</li>
+                <li><code>**data()**</code>：与需要指针和长度参数的 C 库函数（如某些网络或图形 API）进行数据交换。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.2.4-array-容器访问元素的方法"><code>2.2.4 array 容器访问元素的方法</code></h2>
+        <blockquote>
+            <p>2.2.4</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::array 容器提供了多种访问其内部元素的方式。这些方法兼顾了 C++ 的性能、安全性与 C 语言的兼容性。熟练掌握这些方法，可以让你在不同场景下写出更高效、更安全的代码。</p>
+        <p>访问单个元素的主要方法包括：</p>
+        <ul>
+            <li><code>**operator[]**</code>：最常用，最高效的访问方式，但<strong>不进行</strong>边界检查。</li>
+            <li><code>**at()**</code>：提供<strong>带边界检查</strong>的安全访问方式。</li>
+            <li><code>front()</code> 和 <code>**back()**</code>：快速访问第一个和最后一个元素。</li>
+            <li><code>**get&lt;N&gt;()**</code>：一种在编译时进行索引的访问方式。</li>
+            <li><code>**data()**</code>：获取指向底层连续内存的指针，主要用于与 C 风格 API 交互。</li>
+        </ul>
+        <p>访问多个元素则通常通过迭代器配合循环（尤其是基于范围的 for 循环）来实现。</p>
+        <h4>【语法】</h4>
+<pre><code class="language-cpp">// 1. operator[]
+T&amp; operator[size_type n](size_type n);
+const T&amp; operator[size_type n](size_type n) const;
+
+// 2. at()
+T&amp; at(size_type n);
+const T&amp; at(size_type n) const;
+
+// 3. get&lt;N&gt;() (非成员函数)
+template &lt;size_t I, class T, size_t N&gt;
+T&amp; get(array&lt;T, N&gt;&amp; a) noexcept;
+
+// 4. data()
+T* data() noexcept;
+const T* data() const;
+</code></pre>
+        <h4>【代码】</h4>
+        <p>此示例全面展示了访问 array 元素的各种方法。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;array&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::array&lt;std::string, 5&gt; words = {"one", "two", "three", "four", "five"};
+
+    // --- 访问单个元素 ---
+    // 使用 operator[]
+    std::cout &lt;&lt; "words[1]: " &lt;&lt; words[1] &lt;&lt; std::endl;
+    words[1] = "TWO"; // 修改元素
+    std::cout &lt;&lt; "words[1] (修改后): " &lt;&lt; words[1] &lt;&lt; std::endl;
+
+    // 使用 at()
+    std::cout &lt;&lt; "words.at(3): " &lt;&lt; words.at(3) &lt;&lt; std::endl;
+    // words.at(5) = "SIX"; // 此行若取消注释，将因越界而抛出 std::out_of_range 异常
+
+    // 使用 get&lt;N&gt;()
+    std::cout &lt;&lt; "get&lt;3&gt;(words): " &lt;&lt; std::get&lt;3&gt;(words) &lt;&lt; std::endl;
+
+    // --- 访问多个元素 ---
+    std::cout &lt;&lt; "遍历所有元素: ";
+    for(size_t i = 0; i &lt; words.size(); ++i) {
+        std::cout &lt;&lt; words[i] &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>words[1]: two
+words[1] (修改后): TWO
+words.at(3): four
+get&lt;3&gt;(words): four
+遍历所有元素: one TWO three four five
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>at() 和 operator[] 的安全性与性能对比：</p>
+        <div class="graphviz">
+<pre><code>digraph Array_Access {
+    rankdir=TB;
+    node [fontname="SimHei", shape=box, style=rounded];
+
+    subgraph cluster_0 {
+        label="访问方式对比";
+
+        at_access [label="arr.at(n)\n✓ 边界检查\n✓ 越界时抛出异常 (安全)\n✗ 性能略低"];
+        op_access [label="arr[n]\n✗ 无边界检查\n✗ 越界时导致未定义行为 (危险)\n✓ 性能更高"];
+    }
+
+    start [shape=plaintext, label="选择哪种访问方式？"];
+    start -> at_access [label="追求代码健壮性"];
+    start -> op_access [label="追求极致性能且\n能确保索引有效"];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>operator[]</code> 速度快，但风险高。如果索引越界，其行为是未定义的，可能导致程序崩溃或数据损坏。</li>
+                <li><code>at()</code> 提供了运行时的安全保障，但由于需要进行检查，会带来微小的性能开销。在不确定索引是否有效时，应始终优先使用 <code>at()</code>。</li>
+                <li><code>get&lt;n&gt;(arr)</code> 中的 <code>n</code> 必须是一个编译期常量，不能是变量。它常用于元编程或处理元组（tuple）等场景。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 什么时候用 <code>get&lt;&gt;()</code> 而不是 <code>at()</code> 或 <code>[]</code>？</li>
+                <li><strong>答：</strong> <code>get()</code> 主要用在泛型编程中，当你需要在编译时通过一个常量索引来访问元素时。对于日常的、索引在运行时才确定的情况，使用 <code>at()</code> 或 <code>[]</code> 更为常见和直接。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>获取或修改容器中的特定元素。</li>
+                <li>将 <code>data()</code> 返回的指针传递给期望接收 C 风格数组的函数。</li>
+                <li>通过循环结构（如基于范围的 for 循环）遍历并处理容器中的所有元素。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.2.5-array-容器的迭代器使用"><code>2.2.5 array 容器的迭代器使用</code></h2>
+        <blockquote>
+            <p>2.2.5</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::array 容器的迭代器是随机访问迭代器，这是功能最强大的迭代器类型。这意味着它可以向前、向后移动，也可以通过算术运算直接跳到任意位置。拥有随机访问迭代器使得 array 容器可以与所有的 STL 算法（包括 std::sort）完美配合。</p>
+        <p><code>array</code> 容器提供了一组成员函数来获取不同类型的迭代器，用于正向遍历、反向遍历，以及只读访问。</p>
+        <h4>【语法】</h4>
+        <ul>
+            <li><strong>正向迭代器</strong>
+                <ul>
+                    <li><code>begin()</code> / <code>cbegin()</code>: 返回指向容器第一个元素的迭代器。</li>
+                    <li><code>end()</code> / <code>cend()</code>: 返回指向容器末尾之后位置的迭代器。</li>
+                </ul>
+            </li>
+            <li><strong>反向迭代器</strong>
+                <ul>
+                    <li><code>rbegin()</code> / <code>crbegin()</code>: 返回指向容器最后一个元素的反向迭代器。</li>
+                    <li><code>rend()</code> / <code>crend()</code>: 返回指向容器第一个元素之前位置的反向迭代器。</li>
+                </ul>
+            </li>
+        </ul>
+        <p><code>c</code> 前缀的函数 ( <code>cbegin</code>, <code>cend</code> 等) 总是返回 <code>const_iterator</code>，即使容器本身不是 <code>const</code> 的。</p>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;array&gt;
+#include &lt;iterator&gt; // 为了 std::ostream_iterator
+
+int main() {
+    std::array&lt;int, 5&gt; values = {10, 20, 30, 40, 50};
+
+    // 使用正向迭代器遍历
+    std::cout &lt;&lt; "正向遍历: ";
+    for (auto it = values.begin(); it != values.end(); ++it) {
+        std::cout &lt;&lt; *it &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    // 使用反向迭代器遍历
+    std::cout &lt;&lt; "反向遍历: ";
+    for (auto it = values.rbegin(); it != values.rend(); ++it) {
+        std::cout &lt;&lt; *it &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    // 使用 const 迭代器 (cbegin/cend)
+    std::cout &lt;&lt; "使用常量迭代器遍历: ";
+    for (auto it = values.cbegin(); it != values.cend(); ++it) {
+        // *it = 100; // 此行会导致编译错误，因为 it 是 const_iterator
+        std::cout &lt;&lt; *it &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>正向遍历: 10 20 30 40 50
+反向遍历: 50 40 30 20 10
+使用常量迭代器遍历: 10 20 30 40 50
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>下图清晰地展示了 array 容器中各个迭代器指向的位置。</p>
+        <div class="graphviz">
+<pre><code>digraph Array_Iterators_Linear {
+    node [fontname="SimHei"];
+
+    subgraph cluster_array {
+        label = "array<T, 4> a";
+        arr [shape=record, label="{<f0> E1 | <f1> E2 | <f2> E3 | <f3> E4}", width=4];
+    }
+
+    begin_node [label="(c)begin()", shape=plaintext];
+    end_node [label="(c)end()", shape=plaintext];
+    rbegin_node [label="(c)rbegin()", shape=plaintext];
+    rend_node [label="(c)rend()", shape=plaintext];
+
+    begin_ptr [shape=point, width=0];
+    end_ptr [shape=point, width=0];
+    rbegin_ptr [shape=point, width=0];
+    rend_ptr [shape=point, width=0];
+
+    begin_node -> begin_ptr [style=dashed, dir=none];
+    begin_ptr -> arr:f0 [arrowhead=vee, tailport=s];
+
+    end_node -> end_ptr [style=dashed, dir=none];
+    arr:f3 -> end_ptr [style=invis]; 
+
+    rbegin_node -> rbegin_ptr [style=dashed, dir=none];
+    rbegin_ptr -> arr:f3 [arrowhead=vee, tailport=s];
+
+    rend_node -> rend_ptr [style=dashed, dir=none];
+    rend_ptr -> arr:f0 [style=invis]; 
+
+    edge [style=invis];
+    {rank=same; begin_node; end_node; rend_node; rbegin_node;}
+}
+</code></pre>
+        </div>
+        <ul>
+            <li><code>begin()</code> 指向第一个元素 <code>E1</code>。</li>
+            <li><code>end()</code> 指向最后一个元素 <code>E4</code> 之后的位置。</li>
+            <li><code>rbegin()</code> 指向最后一个元素 <code>E4</code>。</li>
+            <li><code>rend()</code> 指向第一个元素 <code>E1</code> 之前的位置。</li>
+        </ul>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>array</code> 的迭代器不会因为容器操作而失效，因为 <code>array</code> 的大小和内存位置是固定的。这使得它的迭代器比 <code>vector</code> 的更稳定。</li>
+                <li>对反向迭代器执行 <code>++</code> 操作，实际上会使它指向序列中的前一个元素。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>rbegin()</code> 指向哪里？ <code>rend()</code> 又指向哪里？</li>
+                <li><strong>答：</strong> <code>rbegin()</code> 返回一个指向容器中<strong>最后一个</strong>元素的反向迭代器。 <code>rend()</code> 返回一个指向<strong>第一个</strong>元素<strong>之前</strong>位置的反向迭代器。 <code>rend()</code> 本身不指向有效元素，它和 <code>end()</code> 一样，是作为循环的终止条件。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>配合 STL 算法，对 <code>array</code> 中的元素执行排序、查找、变换等操作。</li>
+                <li>以正向或反向的方式灵活地遍历容器中的元素。</li>
+                <li>使用 <code>cbegin()</code>/ <code>cend()</code> 等函数可以获取只读迭代器，增强代码的 const 正确性。</li>
+            </ul>
+        </div>
+        <hr>
+        <h1 id="2.3-vector-容器">2.3 vector 容器</h1>
+        <blockquote></blockquote>
+        <h2 id="2.3.1-vector-动态的-升级版-普通数组"><code>2.3.1 vector：动态的“升级版”普通数组</code></h2>
+        <blockquote>
+            <p>2.3.1</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::vector 可谓是 C++ STL 中最受欢迎的容器，它就像一个“动态数组”，是 std::array 和 C 风格数组的“超级升级版”。</p>
+        <p><code>vector</code> 的核心特性在于其<strong>大小是动态变化的</strong>。这意味着你可以在运行时根据需要添加或删除元素，而 <code>vector</code> 会在底层自动地管理内存。当现有空间不足时，它会自动申请一块更大的内存，将原有元素移动过去，并释放旧的内存空间，整个过程对用户来说是透明的。</p>
+        <p><code>vector</code> 的关键特性：</p>
+        <ol>
+            <li><strong>动态大小</strong>：可以在运行时通过 <code>push_back</code>, <code>pop_back</code>, <code>insert</code>, <code>erase</code> 等操作改变其大小。</li>
+            <li><strong>连续内存存储</strong>：和 <code>array</code> 一样， <code>vector</code> 的元素也存储在一段连续的内存空间中。这保证了它可以像数组一样通过下标快速访问任意元素，同时也能够与需要连续内存的 C 风格 API 良好地交互。</li>
+            <li><strong>性能特点</strong>：
+                <ul>
+                    <li><strong>随机访问</strong>：通过下标 <code>[]</code> 或 <code>at()</code> 访问元素非常快，时间复杂度为 O(1)。</li>
+                    <li><strong>尾部操作</strong>：在容器尾部添加（ <code>push_back</code>）或删除（ <code>pop_back</code>）元素通常也很快，平均时间复杂度为 O(1)。</li>
+                    <li><strong>中部/头部操作</strong>：在容器的开头或中间插入、删除元素则效率较低，因为需要移动之后的所有元素，时间复杂度为 O(n)。</li>
+                </ul>
+            </li>
+        </ol>
+        <h4>【语法】</h4>
+        <p>要使用 vector 容器，必须包含  头文件。</p>
+<pre><code class="language-cpp">#include &lt;vector&gt;
+using namespace std; // 可选，为了方便
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>vector 在栈上只保存了一些管理信息（如指向堆内存的指针、大小和容量），而实际的元素数据则存储在堆上的一块连续内存中。</p>
+        <div class="graphviz">
+<pre><code>digraph Vector_Concept {
+    rankdir=LR;
+    node [fontname="SimHei"];
+
+    subgraph cluster_stack {
+        label = "栈内存";
+        vec_obj [shape=record, label="{ <p> 指向堆内存的指针 | size (大小) | capacity (容量) }", style=filled, fillcolor=lightblue];
+    }
+
+    subgraph cluster_heap {
+        label = "堆内存 (连续空间)";
+        heap_mem [shape=record, label="<f0> E1 | <f1> E2 | <f2> E3 | ... | <fN>"];
+    }
+
+    vec_obj:p -> heap_mem:f0 [label=" 管理 "];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>vector</code> 的自动内存管理虽然方便，***但当发生“重新分配”时，会有一定的性能开销。***</li>
+                <li>***内存重新分配会导致之前获取的所有迭代器、指针和引用全部失效。***</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>vector</code> 和 <code>array</code> 到底该用哪个？</li>
+                <li><strong>答：</strong> 当你在编译时就知道需要存储的元素数量，并且这个数量不会改变时，应优先考虑 <code>std::array</code>，因为它没有动态内存管理的开销，性能更好。当你不确定需要存储多少元素，或者元素数量需要在运行时增减时， <code>std::vector</code> 是不二之选。在不确定时， <code>vector</code> 通常是更安全、更通用的选择。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>作为 C 风格动态数组（ <code>new T[n]</code>）的安全、现代的替代品。</li>
+                <li>在绝大多数需要线性存储数据的场景中，作为首选的默认容器。</li>
+                <li>存储和管理在运行时才能确定数量的对象集合。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.3.2-vector-容器的创建与初始化"><code>2.3.2 vector 容器的创建与初始化</code></h2>
+        <blockquote>
+            <p>2.3.2</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::vector 的创建方式非常灵活，其模板类提供了多种构造函数，可以满足从创建空容器到用各种数据源进行初始化的多种需求。</p>
+        <h4>【语法】</h4>
+        <ol>
+            <li><strong>创建空容器</strong>：
+<pre><code class="language-cpp">std::vector&lt;T&gt; vec;
+</code></pre>
+            </li>
+            <li><strong>创建指定数量元素的容器</strong>：
+<pre><code class="language-cpp">std::vector&lt;T&gt; vec(n);         // 创建包含 n 个值初始化元素的容器
+std::vector&lt;T&gt; vec(n, val);    // 创建包含 n 个值为 val 的元素的容器
+</code></pre>
+            </li>
+            <li><strong>使用初始化列表 (C++11)</strong>：
+<pre><code class="language-cpp">std::vector&lt;T&gt; vec {v1, v2, v3, ...};
+std::vector&lt;T&gt; vec = {v1, v2, v3, ...}; // 等价
+</code></pre>
+            </li>
+            <li><strong>拷贝和移动构造</strong>：
+<pre><code class="language-cpp">std::vector&lt;T&gt; vec2(vec1);         // 拷贝构造，vec2 是 vec1 的一个副本
+std::vector&lt;T&gt; vec3(std::move(vec1)); // 移动构造，vec1 的资源被转移给 vec
+</code></pre>
+            </li>
+            <li><strong>从其他迭代器范围创建</strong>：
+<pre><code class="language-cpp">// 从另一个容器（或其他迭代器范围）的 [first, last) 区间创建
+std::vector&lt;T&gt; vec(first, last);
+</code></pre>
+            </li>
+        </ol>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;list&gt;
+
+template&lt;typename T&gt;
+void print_vector(const std::string& name, const std::vector&lt;T&gt;& vec) {
+    std::cout &lt;&lt; name &lt;&lt; " (size=" &lt;&lt; vec.size() &lt;&lt; "): ";
+    for (const auto& element : vec) {
+        std::cout &lt;&lt; element &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+}
+
+int main() {
+    // 1. 创建空容器
+    std::vector&lt;int&gt; v1;
+    print_vector("v1 (空容器)", v1);
+
+    // 2. 创建含n个元素的容器
+    std::vector&lt;int&gt; v2(5, 100); // 5个值为100的int
+    print_vector("v2 (5个100)", v2);
+
+    std::vector&lt;int&gt; v3(5); // 5个值初始化的int (即为0)
+    print_vector("v3 (5个0)", v3);
+
+    // 3. 使用初始化列表
+    std::vector&lt;int&gt; v4 {1, 2, 3, 4, 5};
+    print_vector("v4 (初始化列表)", v4);
+
+    // 4. 拷贝构造
+    std::vector&lt;int&gt; v5(v4);
+    print_vector("v5 (拷贝自 v4)", v5);
+
+    // 5. 从迭代器范围创建
+    int arr[] = {11, 22, 33};
+    std::vector&lt;int&gt; v6(arr, arr + 3);
+    print_vector("v6 (来自数组)", v6);
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>v1 (空容器) (size=0):
+v2 (5个100) (size=5): 100 100 100 100 100
+v3 (5个0) (size=5): 0 0 0 0 0
+v4 (初始化列表) (size=5): 1 2 3 4 5
+v5 (拷贝自 v4) (size=5): 1 2 3 4 5
+v6 (来自数组) (size=3): 11 22 33
+</code></pre>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>()</code> 和 <strong><code>{}</code> 的歧义</strong>：在初始化 <code>vector</code> 时，使用圆括号 <code>()</code> 和花括号 <code>{}</code> 的含义可能不同。这是一个需要特别注意的地方。
+                    <ul>
+                        <li><code>std::vector&lt;int&gt; v(10);</code> 创建包含 <strong>10个</strong> 默认值为 <code>0</code> 的元素的 <code>vector</code>。</li>
+                        <li><code>std::vector&lt;int&gt; v{10};</code> 创建包含 <strong>1个</strong> 元素，其值为 <code>10</code> 的 <code>vector</code>。</li>
+                    </ul>
+                </li>
+                <li><code>vector</code> 支持从任何提供了至少是输入迭代器的容器或范围来构造。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 我想创建一个 <code>vector</code>，里面只有两个元素，10 和 20，该怎么写？</li>
+                <li><strong>答：</strong> 最清晰的方式是使用初始化列表： <code>std::vector&lt;int&gt; v = {10, 20};</code> 或 <code>std::vector&lt;int&gt; v{10, 20};</code>。 如果写成 <code>std::vector&lt;int&gt; v(10, 20);</code>，则会创建一个包含 10 个值为 20 的元素的 <code>vector</code>。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>根据不同的初始数据源，灵活地创建 <code>vector</code> 实例。</li>
+                <li>使用拷贝构造函数可以方便地创建容器的副本，用于数据备份或传递。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.3.3-vector-容器的成员函数"><code>2.3.3 vector 容器的成员函数</code></h2>
+        <blockquote>
+            <p>2.3.3</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>vector 提供了比 array 更丰富的成员函数，主要增加了管理动态内存和修改容器大小的功能。</p>
+        <h4>【语法】</h4>
+        <p>下表汇总了 vector 的常用成员函数，其中标 * 的是 vector 特有或功能更丰富的函数。</p>
+        <table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>类别</strong></td>
+<td><strong>成员函数</strong></td>
+<td><strong>功能描述</strong></td>
+</tr>
+<tr>
+<td><strong>迭代器</strong></td>
+<td><code>begin/end</code>, <code>rbegin/rend</code>, <code>cbegin/cend</code>...</td>
+<td>与 <code>array</code> 类似，返回各种类型的随机访问迭代器。</td>
+</tr>
+<tr>
+<td><strong>容量</strong></td>
+<td><code>size()</code></td>
+<td>返回容器中当前元素的数量。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>max_size()</code></td>
+<td>返回容器可容纳的最大元素数量。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>empty()</code></td>
+<td>判断容器是否为空。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>resize()</code>*</td>
+<td>改变 <code>vector</code> 的大小，可能涉及添加或删除元素。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>capacity()</code>*</td>
+<td>返回当前已分配内存中可容纳的元素总数，通常 <code>&gt;= size()</code>。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>reserve()</code>*</td>
+<td>预留存储空间，避免不必要的内存重分配。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>shrink_to_fit()</code>*</td>
+<td>释放未使用的内存，使 <code>capacity()</code> 尽可能等于 <code>size()</code>。</td>
+</tr>
+<tr>
+<td><strong>元素访问</strong></td>
+<td><code>operator[]</code>, <code>at()</code>, <code>front()</code>, <code>back()</code>, <code>data()</code></td>
+<td>与 <code>array</code> 类似，用于访问元素。</td>
+</tr>
+<tr>
+<td><strong>修改器</strong></td>
+<td><code>assign()</code></td>
+<td>替换 <code>vector</code> 中的所有元素。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>push_back()</code>*</td>
+<td>在容器尾部添加一个元素。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>pop_back()</code>*</td>
+<td>移除容器尾部的最后一个元素。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>insert()</code>*</td>
+<td>在指定迭代器位置插入一个或多个元素。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>erase()</code>*</td>
+<td>移除指定迭代器位置或范围的元素。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>emplace()</code>*</td>
+<td>在指定位置直接构造元素，效率通常比 <code>insert</code> 高。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>emplace_back()</code>*</td>
+<td>在容器尾部直接构造元素，效率通常比 <code>push_back</code> 高。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>swap()</code></td>
+<td>交换两个 <code>vector</code> 的内容。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>clear()</code></td>
+<td>清空所有元素， <code>size()</code> 变为0，但 <code>capacity()</code> 可能不变。</td>
+</tr>
+</tbody>
+</table>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    std::vector&lt;char&gt; values;
+
+    // 使用 push_back 添加元素
+    values.push_back('S');
+    values.push_back('T');
+    values.push_back('L');
+
+    std::cout &lt;&lt; "当前元素个数: " &lt;&lt; values.size() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "当前容量: " &lt;&lt; values.capacity() &lt;&lt; std::endl;
+
+    // 使用迭代器遍历
+    for (auto it = values.begin(); it != values.end(); ++it) {
+        std::cout &lt;&lt; *it;
+    }
+    std::cout &lt;&lt; std::endl;
+
+    // 在开头插入元素 'C'
+    values.insert(values.begin(), 'C');
+    std::cout &lt;&lt; "首个元素为: " &lt;&lt; values.front() &lt;&lt; std::endl;
+
+    // 移除尾部元素
+    values.pop_back();
+
+    // 清空所有元素
+    values.clear();
+    std::cout &lt;&lt; "清空后，元素个数为: " &lt;&lt; values.size() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "清空后，容量为: " &lt;&lt; values.capacity() &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>当前元素个数: 3
+当前容量: 4
+STL
+首个元素为: C
+清空后，元素个数为: 0
+清空后，容量为: 4
+</code></pre>
+        <p>（注意： <code>capacity</code> 的具体值可能因编译器和标准库实现而异，但其变化趋势是遵循一定规律的。）</p>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>任何可能改变 <code>vector</code> 大小或容量的操作（如 <code>push_back</code>, <code>insert</code>, <code>reserve</code> 等）都<strong>可能</strong>导致迭代器失效。</li>
+                <li><code>clear()</code> 只改变 <code>size()</code>，不改变 <code>capacity()</code>。想释放多余内存需使用 <code>shrink_to_fit()</code> 或 <code>swap</code> 技巧。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>emplace_back()</code> 和 <code>push_back()</code> 有什么区别？</li>
+                <li><strong>答：</strong> <code>emplace_back()</code> 通过<strong>完美转发</strong>参数，直接在 <code>vector</code> 的内存空间中<strong>构造</strong>新元素，避免了额外的拷贝或移动构造。而 <code>push_back()</code> 则是先创建一个临时对象，再将其拷贝或移动到 <code>vector</code> 中。因此， <code>emplace_back()</code> 的效率通常更高。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <p>这些成员函数构成了 vector 强大功能的核心，使其能够灵活地管理动态数据集合，满足从简单数据存储到复杂算法实现的各种需求。</p>
+        </div>
+        <hr>
+        <h2 id="2.3.4-vector-容器访问元素的方法"><code>2.3.4 vector 容器访问元素的方法</code></h2>
+        <blockquote>
+            <p>2.3.4</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::vector 提供了与 std::array 几乎相同的元素访问方法，这得益于其底层连续存储的特性。你可以像操作普通 C++ 数组一样，通过下标来直接访问 vector 中的任意元素。</p>
+        <p>主要的访问方法包括：</p>
+        <ul>
+            <li><code>**operator[]**</code>：通过下标访问，速度最快，但不进行边界检查。</li>
+            <li><code>**at()**</code>：通过下标访问，但会进行边界检查，更安全。</li>
+            <li><code>**front()**</code>：返回对第一个元素的引用。</li>
+            <li><code>**back()**</code>：返回对最后一个元素的引用。</li>
+            <li><code>**data()**</code>：返回指向底层数组的指针。</li>
+            <li><strong>迭代器</strong>：通过迭代器遍历整个或部分容器。</li>
+        </ul>
+        <h4>【语法】</h4>
+<pre><code class="language-cpp">// 1. operator[]
+T&amp; operator[size_type n](size_type n);
+
+// 2. at()
+T&amp; at(size_type n);
+
+// 3. front() / back()
+T&amp; front();
+T&amp; back();
+
+// 4. data()
+T* data() noexcept;
+</code></pre>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    std::vector&lt;int&gt; values {1, 2, 3, 4, 5};
+
+    // --- 使用 operator[] ---
+    std::cout &lt;&lt; "第一个元素 (operator[]): " &lt;&lt; values[0] &lt;&lt; std::endl;
+    // 修改元素
+    values[0] = 100;
+
+    // --- 使用 at() ---
+    std::cout &lt;&lt; "修改后的第一个元素 (at): " &lt;&lt; values.at(0) &lt;&lt; std::endl;
+    try {
+        // 尝试越界访问，at() 会抛出异常
+        values.at(10) = 99;
+    } catch (const std::out_of_range& e) {
+        std::cout &lt;&lt; "捕获到异常: " &lt;&lt; e.what() &lt;&lt; std::endl;
+    }
+
+    // --- 使用 front() 和 back() ---
+    std::cout &lt;&lt; "第一个元素 (front): " &lt;&lt; values.front() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "最后一个元素 (back): " &lt;&lt; values.back() &lt;&lt; std::endl;
+    values.back() = 500; // 修改最后一个元素
+
+    // --- 使用 data() ---
+    int* p = values.data();
+    std::cout &lt;&lt; "通过 data() 访问第三个元素: " &lt;&lt; *(p + 2) &lt;&lt; std::endl;
+
+    // --- 遍历 ---
+    std::cout &lt;&lt; "当前容器内容: ";
+    for (const auto& val : values) {
+        std::cout &lt;&lt; val &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>第一个元素 (operator[]): 1
+修改后的第一个元素 (at): 100
+捕获到异常: vector::_M_range_check: __n (which is 10) &gt;= this-&gt;size() (which is 5)
+第一个元素 (front): 100
+最后一个元素 (back): 5
+通过 data() 访问第三个元素: 3
+当前容器内容: 100 2 3 4 500
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>vector 的几种元素访问方式图解。</p>
+        <div class="graphviz">
+<pre><code>digraph Vector_Access {
+    node [fontname="SimHei"];
+    vec [shape=record, label="<f0> vec[0]\nvec.front() | <f1> vec[1]\nvec.at(1) | <f2> vec[2] | ... | <fN> vec[N-1]\nvec.back()"];
+
+    data_ptr [label="vec.data()", shape=ellipse];
+    data_ptr -> vec:f0 [style=dashed, arrowhead=vee];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>at()</code> 和 <code>[]</code> 的选择：在性能要求极高且能确保索引有效的代码段，可以使用 <code>[]</code>。在其他大多数情况下，为了代码的健壮性，推荐使用 <code>at()</code>。</li>
+                <li><code>data()</code> 返回的指针会因 <code>vector</code> 的内存重分配而失效。如果你保存了这个指针，并在之后执行了可能导致容量变化的 <code>vector</code> 操作，那么这个指针就不能再安全地使用了。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 为什么 <code>vector</code> 也有 <code>data()</code> 方法？</li>
+                <li><strong>答：</strong> <code>vector</code> 提供 <code>data()</code> 方法主要是为了与 C 语言代码或需要原生数组指针的库函数兼容。这使得你可以将 <code>vector</code> 的数据无缝传递给这些函数，极大地增强了其通用性。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>高效地读取或修改容器中任意位置的元素。</li>
+                <li>在需要与 C 风格 API 交互时，安全地获取底层连续内存的访问权限。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.3.5-vector-容器的迭代器使用"><code>2.3.5 vector 容器的迭代器使用</code></h2>
+        <blockquote>
+            <p>2.3.5</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>和 array 一样，vector 提供的也是功能最强大的随机访问迭代器。你可以对它进行 ++、--、+n、-n 等所有指针算术运算。</p>
+        <p>然而， <code>vector</code> 迭代器有一个至关重要的特性，这是它与 <code>array</code> 迭代器的根本区别：<strong><code>vector</code> 的迭代器可能会失效（invalidate）</strong>。</p>
+        <p>当 <code>vector</code> 的容量发生变化（即需要重新分配内存来扩展空间）时，它会：</p>
+        <ol>
+            <li>申请一块新的、更大的内存。</li>
+            <li>将所有旧内存中的元素移动或复制到新内存中。</li>
+            <li>释放旧的内存。</li>
+        </ol>
+        <p>这个过程会导致所有指向旧内存的迭代器、指针和引用全部<strong>失效</strong>。继续使用失效的迭代器是严重错误，将导致未定义行为。</p>
+        <p><strong>会导致迭代器失效的常见操作包括</strong>：</p>
+        <ul>
+            <li><code>push_back()</code> / <code>emplace_back()</code>：当 <code>size() == capacity()</code> 时，会触发内存重分配，导致所有迭代器失效。</li>
+            <li><code>insert()</code> / <code>emplace()</code>：在插入点之后的所有迭代器都会失效。如果发生内存重分配，则所有迭代器都会失效。</li>
+            <li><code>erase()</code>：被删除元素之后的所有迭代器都会失效。</li>
+            <li><code>resize()</code> / <code>reserve()</code> / <code>shrink_to_fit()</code>：如果这些操作改变了 <code>capacity()</code>，则所有迭代器都会失效。</li>
+            <li><code>assign()</code>：所有迭代器都会失效。</li>
+        </ul>
+        <h4>【代码】</h4>
+        <p>下面的代码清晰地展示了迭代器失效的过程。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    std::vector&lt;int&gt; values {1, 2, 3};
+
+    // 获取初始迭代器和内存地址
+    auto first = values.begin();
+    int* p_data = values.data();
+
+    std::cout &lt;&lt; "初始容量: " &lt;&lt; values.capacity() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "初始首元素地址: " &lt;&lt; p_data &lt;&lt; std::endl;
+    std::cout &lt;&lt; "first 指向的值: " &lt;&lt; *first &lt;&lt; std::endl;
+
+    std::cout &lt;&lt; "\n--- 添加元素，可能触发内存重分配 ---\n";
+    // 连续 push_back，直到容量改变
+    for(int i = 0; i &lt; 10; ++i) {
+        values.push_back(i);
+    }
+
+    std::cout &lt;&lt; "当前容量: " &lt;&lt; values.capacity() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "当前首元素地址: " &lt;&lt; values.data() &lt;&lt; std::endl;
+
+    // 检查迭代器和指针是否失效
+    if (p_data != values.data()) {
+        std::cout &lt;&lt; "警告: 底层内存地址已改变，指针 p_data 已失效！" &lt;&lt; std::endl;
+        // 此时，迭代器 first 也已失效
+        // std::cout &lt;&lt; *first &lt;&lt; std::endl; // 取消此行注释将导致未定义行为！
+
+        // 正确的做法是重新获取迭代器
+        first = values.begin();
+        std::cout &lt;&lt; "重新获取迭代器后，first 指向的值: " &lt;&lt; *first &lt;&lt; std::endl;
+    }
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+        <p>（注意：地址和容量的具体值可能因环境而异）</p>
+<pre><code>初始容量: 3
+初始首元素地址: 0x7ffd1a6c3b50
+first 指向的值: 1
+
+--- 添加元素，可能触发内存重分配 ---
+当前容量: 16
+当前首元素地址: 0x55a6d0c4e2d0
+警告: 底层内存地址已改变，指针 p_data 已失效！
+重新获取迭代器后，first 指向的值: 1
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>vector 内存重分配与迭代器失效过程。</p>
+        <div class="graphviz">
+<pre><code>digraph Iterator_Invalidation {
+    node [fontname="SimHei"];
+
+    subgraph cluster_before {
+        label = "1. 重分配之前";
+        vec_obj1 [shape=record, label="{<p> 指针 | size=3 | cap=3}", style=filled, fillcolor=lightblue];
+        heap_mem1 [shape=record, label="1 | 2 | 3"];
+        iter1 [label="旧迭代器 first", shape=ellipse, style=filled, fillcolor=green];
+        vec_obj1:p -> heap_mem1;
+        iter1 -> heap_mem1:f0:n [label="指向"];
+    }
+
+    subgraph cluster_after {
+        label = "3. 重分配之后";
+        vec_obj2 [shape=record, label="{<p> 指针 | size=4 | cap=6}", style=filled, fillcolor=lightblue];
+        heap_mem2 [shape=record, label="1 | 2 | 3 | 4 | | "];
+        heap_mem1_dead [label="旧内存\n(已释放)", style=dashed, color=gray];
+        iter1_dead [label="旧迭代器 first (已失效!)", style="dashed,filled", color=red, fillcolor=lightcoral];
+
+        vec_obj2:p -> heap_mem2;
+        iter1_dead -> heap_mem1_dead [style=dashed];
+    }
+
+    step2 [shape=plaintext, label="2. 执行 push_back(4)\n发现容量不足，申请新内存，\n移动数据，释放旧内存"];
+
+    vec_obj1 -> step2 -> vec_obj2 [style=invis];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <p>核心规则： 在任何调用了可能导致 vector 内存重新分配的成员函数之后，都必须假定先前获取的所有迭代器、指针和引用都已失效，并重新获取它们。</p>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 如何在循环中安全地使用 <code>erase</code> 删除 <code>vector</code> 中的元素？</li>
+                <li><strong>答：</strong> <code>erase</code> 方法会返回一个指向被删除元素之后位置的新迭代器。正确的做法是使用这个返回值来更新你的循环迭代器，而不是简单地 <code>it++</code>。例如：</li>
+            </ul>
+<pre><code class="language-cpp">for (auto it = v.begin(); it != v.end(); /* no increment here */) {
+      if (should_be_deleted(*it)) {
+          it = v.erase(it); // 使用 erase 的返回值更新 it
+      } else {
+          ++it; // 只有不删除时才递增
+      }
+}
+</code></pre>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li><strong>遍历与算法</strong>： <code>vector</code> 的迭代器是使用 STL 算法（如 <code>std::sort</code>, <code>std::find</code>, <code>std::copy</code>）的标准方式。</li>
+                <li><strong>精确操作</strong>：通过迭代器可以在 <code>vector</code> 的任意位置进行插入和删除操作。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.3.6-vector-的容量-capacity-和大小-size-管理"><code>2.3.6 vector 的容量（capacity）和大小（size）管理</code></h2>
+        <blockquote>
+            <p>2.3.6</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>对于动态容器 vector 而言，理解“大小（size）”和“容量（capacity）”的区别至关重要，这直接关系到程序的性能和内存效率。</p>
+        <ul>
+            <li><strong>大小 (Size)</strong>：指 <code>vector</code> 中<strong>实际存储</strong>的元素数量。我们可以通过 <code>size()</code> 成员函数获取。</li>
+            <li><strong>容量 (Capacity)</strong>：指 <code>vector</code> 在<strong>不重新分配内存</strong>的情况下，最多可以容纳的元素数量。我们可以通过 <code>capacity()</code> 成员函数获取。</li>
+        </ul>
+        <p>任何情况下，一个 <code>vector</code> 的容量总是大于或等于其大小，即 <code>capacity() &gt;= size()</code>。它们之间的差值 <code>capacity() - size()</code>，就是预留的、未使用的备用空间。</p>
+        <p>当向 <code>vector</code> 中添加新元素时（例如使用 <code>push_back()</code>），如果 <code>size() &lt; capacity()</code>，那么新元素会直接放在备用空间中，这个操作非常快。但是，如果 <code>size() == capacity()</code>，即容器已满， <code>vector</code> 就必须进行**内存重分配（Reallocation）**来扩展容量。</p>
+        <p>内存重分配是一个相对耗时的过程，通常包含以下步骤 1：</p>
+        <ol>
+            <li>分配一块比原有容量更大的新内存（增长策略因库实现而异，通常是1.5倍或2倍 22）。</li>
+            <li>将旧内存中的所有元素移动或复制到新内存中。</li>
+            <li>析构并释放旧的内存空间。</li>
+        </ol>
+        <p>正是因为内存重分配可能带来性能开销，并且会导致所有迭代器、指针和引用失效，所以合理地管理 <code>vector</code> 的容量是编写高效 C++ 代码的关键一环。 3</p>
+        <h4>【语法】</h4>
+        <p>vector 提供了一系列成员函数来管理其大小和容量：</p>
+        <table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>成员函数</strong></td>
+<td><strong>功能描述</strong></td>
+</tr>
+<tr>
+<td><code>size()</code></td>
+<td>返回 <code>vector</code> 中实际元素的个数。 4</td>
+</tr>
+<tr>
+<td><code>capacity()</code></td>
+<td>返回 <code>vector</code> 的当前容量。 5</td>
+</tr>
+<tr>
+<td><code>reserve(n)</code></td>
+<td>强制 <code>vector</code> 将其容量更改为至少为 <code>n</code>，如果 <code>n</code> 大于当前容量，则会发生内存重分配。此函数只影响容量，不改变大小。 666</td>
+</tr>
+<tr>
+<td><code>resize(n)</code></td>
+<td>强制 <code>vector</code> 将其大小更改为 <code>n</code>。如果 <code>n</code> 大于当前 <code>size()</code>，则会添加新元素（值初始化）；如果 <code>n</code> 小于当前 <code>size()</code>，则会销毁多余的元素。此函数会同时改变 <code>size</code>，并可能改变 <code>capacity</code>。 7777</td>
+</tr>
+<tr>
+<td><code>shrink_to_fit()</code></td>
+<td>(C++11) 请求 <code>vector</code> 释放未使用的内存，使 <code>capacity()</code> 尽可能等于 <code>size()</code>。这是一个非强制性请求。</td>
+</tr>
+</tbody>
+</table>
+        <h4>【代码】</h4>
+        <p>下面的代码展示了 size, capacity, reserve 和 resize 如何协同工作。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+void print_status(const std::vector&lt;int&gt;& v, const std::string& msg) {
+    std::cout &lt;&lt; msg &lt;&lt; " -> ";
+    std::cout &lt;&lt; "Size: " &lt;&lt; v.size() &lt;&lt; ", Capacity: " &lt;&lt; v.capacity() &lt;&lt; std::endl;
+}
+
+int main() {
+    std::vector&lt;int&gt; v;
+    print_status(v, "初始状态");
+
+    // 1. 使用 reserve 预留空间
+    v.reserve(10);
+    print_status(v, "调用 reserve(10) 后");
+
+    // 2. 添加元素，观察 size 和 capacity 的变化
+    std::cout &lt;&lt; "\n--- 添加5个元素 ---\n";
+    for(int i = 0; i &lt; 5; ++i) {
+        v.push_back(i);
+    }
+    print_status(v, "添加5个元素后");
+
+    // 3. 使用 resize 改变大小
+    std::cout &lt;&lt; "\n--- 调用 resize ---\n";
+    v.resize(15); // 扩展大小，新元素为0
+    print_status(v, "调用 resize(15) 后");
+
+    v.resize(3);  // 缩小大小
+    print_status(v, "调用 resize(3) 后");
+
+    // 4. 使用 shrink_to_fit 释放多余容量
+    std::cout &lt;&lt; "\n--- 调用 shrink_to_fit ---\n";
+    v.shrink_to_fit();
+    print_status(v, "调用 shrink_to_fit 后");
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+        <p>（注意：capacity 的具体值可能因编译器和库的实现而异）</p>
+<pre><code>初始状态 -> Size: 0, Capacity: 0
+调用 reserve(10) 后 -> Size: 0, Capacity: 10
+
+--- 添加5个元素 ---
+添加5个元素后 -> Size: 5, Capacity: 10
+
+--- 调用 resize ---
+调用 resize(15) 后 -> Size: 15, Capacity: 15
+调用 resize(3) 后 -> Size: 3, Capacity: 15
+
+--- 调用 shrink_to_fit ---
+调用 shrink_to_fit 后 -> Size: 3, Capacity: 3
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>size() 和 capacity() 的关系示意图。 8</p>
+        <div class="graphviz">
+<pre><code>digraph Vector_Size_Capacity {
+    rankdir=TB;
+    node [fontname="SimHei", shape=none];
+    edge [arrowhead=none];
+
+    subgraph cluster_0 {
+        label = "vector 底层连续内存";
+        vec_mem [shape=record, label="<f0> 2 |<f1> 3 |<f2> 5 |<f3> 7 |<f4> 11 |<f5> (备用) |<f6> (备用) |<f7> (备用)"];
+    }
+
+    subgraph {
+        rank=same;
+        size_label [label="vector.size()\n(实际元素数量 = 5)"];
+        cap_label [label="vector.capacity()\n(总容量 = 8)"];
+    }
+
+    size_brace [label=<&lt;table border="0" cellborder="0"&gt;&lt;tr&gt;&lt;td fixedsize="true" width="165" height="10"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;font point-size="24"&gt;{&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;>];
+    cap_brace [label=<&lt;table border="0" cellborder="0"&gt;&lt;tr&gt;&lt;td fixedsize="true" width="264" height="10"&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;font point-size="30"&gt;{&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;>];
+
+    size_label -> size_brace [style=invis];
+    cap_label -> cap_brace [style=invis];
+
+    {rank=same; size_brace_end; vec_mem:f4:s}
+    size_brace:e -> size_brace_end:w [style=solid, arrowhead=none];
+
+    {rank=same; cap_brace_end; vec_mem:f7:s}
+    cap_brace:e -> cap_brace_end:w [style=solid, arrowhead=none];
+
+    size_brace -> vec_mem:f0:n [style=invis];
+    cap_brace -> vec_mem:f0:s [style=invis];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>resize(n)</code> 会构造或销毁元素，而 <code>reserve(n)</code> 不会。</li>
+                <li><code>reserve(n)</code> 只有当 <code>n</code> 大于当前 <code>capacity()</code> 时才会引起内存重分配。</li>
+                <li><code>shrink_to_fit()</code> 是一个“请求”而非“命令”，标准库实现可以忽略它。不过，主流的实现（如 GCC, Clang, MSVC）通常会遵守这个请求。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 如何避免 <code>vector</code> 频繁的内存重分配以提高性能？</li>
+                <li><strong>答：</strong> 如果你在向 <code>vector</code> 添加大量元素之前，能够预估出最终元素的总数，那么最佳实践是首先调用 <strong><code>reserve()</code> 方法一次性地分配足够的内存</strong>。这样可以确保在后续添加元素的过程中不会发生任何内存重分配，从而显著提升性能。 9999</li>
+                <li><strong>问：</strong> <code>vector</code> 在大量删除元素后，如何回收内存？</li>
+                <li><strong>答：</strong> 在 C++11 及以后的版本中，最直接的方法是调用 <code>shrink_to_fit()</code>。在旧版本中，一个常见的技巧是“swap-to-fit”，即 <code>std::vector&lt;T&gt;(v).swap(v);</code>，它通过创建一个临时的、容量恰好的 <code>vector</code> 并与原 <code>vector</code> 交换，来达到回收内存的目的。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li><code>**size()**</code>：用于循环控制和逻辑判断，获取容器的实际大小。</li>
+                <li><code>**capacity()**</code>：用于性能分析，监控内存使用状态。</li>
+                <li><code>**reserve()**</code>：是 <code>vector</code> 最重要的性能优化工具，用于大规模数据填充前的内存预分配。</li>
+                <li><code>**resize()**</code>：当需要一个确定大小的 <code>vector</code> 时使用，例如用作缓冲区。</li>
+                <li><code>**shrink_to_fit()**</code>：当 <code>vector</code> 在某个阶段元素数量锐减且在后续长时间不再增长时，用于减少程序峰值内存占用。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.3.7-vector-添加和插入元素"><code>2.3.7 vector 添加和插入元素</code></h2>
+        <blockquote>
+            <p>2.3.7</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>向 vector 中添加新元素是其作为动态数组最核心的功能之一。根据添加位置的不同，主要分为两类操作：</p>
+        <ol>
+            <li><strong>在尾部添加元素</strong>：这是 <code>vector</code><strong>最高效</strong>的添加方式。由于 <code>vector</code> 的内存是连续的，在尾部添加通常只涉及修改大小和在预留空间中构造对象，平均时间复杂度为 O(1)。
+                <ul>
+                    <li><code>**push_back()**</code>: 将一个<strong>已存在</strong>的元素拷贝或移动到 <code>vector</code> 的尾部。</li>
+                    <li><strong><code>emplace_back()</code> (C++11)</strong>: 在 <code>vector</code> 的尾部<strong>直接构造</strong>一个新元素，免去了额外拷贝或移动的开销，通常效率更高。</li>
+                </ul>
+            </li>
+            <li><strong>在指定位置插入元素</strong>：在容器的开头或中间插入元素。这是一个<strong>相对低效</strong>的操作，因为需要将被插入位置之后的所有元素都向后移动一位，时间复杂度为 O(n)。
+                <ul>
+                    <li><code>**insert()**</code>: 将一个或多个<strong>已存在</strong>的元素拷贝或移动到指定迭代器位置。</li>
+                    <li><strong><code>emplace()</code> (C++11)</strong>: 在指定迭代器位置<strong>直接构造</strong>一个新元素，效率比 <code>insert</code> 更高。</li>
+                </ul>
+            </li>
+        </ol>
+        <h4>【语法】</h4>
+<pre><code class="language-cpp">// 在尾部添加
+void push_back(const T&amp; val);
+void emplace_back(Args&amp;&amp;... args); // C++11
+
+// 在指定位置插入
+iterator insert(const_iterator pos, const T&amp; val);
+iterator emplace(const_iterator pos, Args&amp;&amp;... args); // C++11
+// insert 还有其他重载形式，可以插入多个元素或一个范围内的元素
+</code></pre>
+        <h4>【代码】</h4>
+        <p>下面的代码通过一个自定义类 MyData 来演示 push_back 和 emplace_back 在底层实现上的效率差异。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+class MyData {
+public:
+    MyData(int v) : value(v) { std::cout &lt;&lt; "调用构造函数 (" &lt;&lt; value &lt;&lt; ")\n"; }
+    MyData(const MyData&amp; other) : value(other.value) { std::cout &lt;&lt; "调用拷贝构造函数 (" &lt;&lt; value &lt;&lt; ")\n"; }
+    MyData(MyData&amp;&amp; other) noexcept : value(other.value) { std::cout &lt;&lt; "调用移动构造函数 (" &lt;&lt; value &lt;&lt; ")\n"; }
+    ~MyData() { std::cout &lt;&lt; "调用析构函数 (" &lt;&lt; value &lt;&lt; ")\n"; }
+private:
+    int value;
+};
+
+int main() {
+    std::vector&lt;MyData&gt; vec;
+    vec.reserve(4); // 预留空间以避免内存重分配，专注于构造过程
+
+    std::cout &lt;&lt; "--- emplace_back(10) ---" &lt;&lt; std::endl;
+    vec.emplace_back(10); // 直接在vector内部构造，只调用一次构造函数
+
+    std::cout &lt;&lt; "\n--- push_back(MyData(20)) ---" &lt;&lt; std::endl;
+    vec.push_back(MyData(20)); // 先构造临时对象，再移动构造到vector中
+
+    std::cout &lt;&lt; "\n--- insert &amp; emplace ---" &lt;&lt; std::endl;
+    // insert 需要先创建一个临时对象
+    vec.insert(vec.begin(), MyData(30));
+    // emplace 直接在指定位置构造
+    vec.emplace(vec.begin(), 40);
+
+    std::cout &lt;&lt; "\n--- main 函数结束 ---\n";
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>--- emplace_back(10) ---
+调用构造函数 (10)
+
+--- push_back(MyData(20)) ---
+调用构造函数 (20)
+调用移动构造函数 (20)
+调用析构函数 (20)
+
+--- insert &amp; emplace ---
+调用构造函数 (30)
+调用移动构造函数 (30)
+调用析构函数 (30)
+调用构造函数 (40)
+
+--- main 函数结束 ---
+调用析构函数 (40)
+调用析构函数 (30)
+调用析构函数 (20)
+调用析构函数 (10)
+</code></pre>
+        <p>从结果可以清晰地看到， <code>emplace_back</code> 和 <code>emplace</code> 比 <code>push_back</code> 和 <code>insert</code> 少了一次移动构造和析构的过程，效率更高。</p>
+        <h4>【图示（概念）】</h4>
+        <p>push_back 与在中间 insert 元素的区别。</p>
+        <div class="graphviz">
+<pre><code>digraph Vector_Insert {
+    rankdir=TB;
+    node [fontname="SimHei"];
+
+    subgraph cluster_0 {
+        label = "push_back (尾部添加, 高效)";
+        pb_before [shape=record, label="<f0> E1 | <f1> E2 | <f2> E3 | <f3> (空闲)"];
+        pb_after [shape=record, label="<f0> E1 | <f1> E2 | <f2> E3 | <f3> E4"];
+        pb_before -> pb_after [label="vec.push_back(E4)"];
+    }
+
+    subgraph cluster_1 {
+        label = "insert (中间插入, 低效)";
+        in_before [shape=record, label="<f0> E1 | <f1> E2 | <f2> E3 | <f3> (空闲)"];
+        in_mid [shape=record, label="<f0> E1 | <f1> E2 | <f2> E2 | <f3> E3"];
+        in_after [shape=record, label="<f0> E1 | <f1> E_new | <f2> E2 | <f3> E3"];
+
+        in_before -> in_mid [label="1. 向后移动元素"];
+        in_mid -> in_after [label="2. 插入新元素"];
+    }
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>任何添加或插入操作都可能导致 <code>vector</code> 内存重分配，从而使所有迭代器、指针和引用失效。</li>
+                <li>在循环中向 <code>vector</code> 插入或删除元素时，必须小心处理迭代器失效问题。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 既然 <code>emplace</code> 效率更高，我还需要 <code>insert</code> 吗？</li>
+                <li><strong>答：</strong> 在 C++11 及以后，应优先使用 <code>emplace</code> 和 <code>emplace_back</code>。但 <code>insert</code> 提供了 <code>emplace</code> 不具备的重载版本，比如可以一次性插入多个相同的值或从另一个迭代器范围插入一段元素，这些场景下 <code>insert</code> 仍然非常有用。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li><code>push_back</code> / <code>**emplace_back**</code>: 是构建 <code>vector</code> 的主要方式，用于在末尾快速追加数据。</li>
+                <li><code>insert</code> / <code>**emplace**</code>: 用于需要在序列特定位置维护元素顺序的场景。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.3.8-vector-删除元素"><code>2.3.8 vector 删除元素</code></h2>
+        <blockquote>
+            <p>2.3.8</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>从 vector 中删除元素同样分为从尾部删除和从指定位置删除。</p>
+        <ol>
+            <li><strong>从尾部删除</strong> ( <code>pop_back()</code>): 这是<strong>最高效</strong>的删除方式，因为它不涉及元素的移动，仅需销毁最后一个元素并更新 <code>size</code>。时间复杂度为 O(1)。</li>
+            <li><strong>从指定位置删除</strong> ( <code>erase()</code>): 从容器的开头或中间删除一个或一段元素。这是一个<strong>相对低效</strong>的操作，因为它需要移动被删除元素之后的所有元素来填补空缺。时间复杂度为 O(n)。</li>
+            <li><strong>清空所有元素</strong> ( <code>clear()</code>): 一次性移除所有元素。</li>
+        </ol>
+        <h4>【语法】</h4>
+<pre><code class="language-cpp">// 移除最后一个元素
+void pop_back();
+
+// 移除 pos 迭代器指向的元素
+iterator erase(const_iterator pos);
+
+// 移除 [first, last) 范围内的所有元素
+iterator erase(const_iterator first, const_iterator last);
+
+// 移除所有元素
+void clear();
+</code></pre>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt; // 为了 std::remove
+
+int main() {
+    std::vector&lt;int&gt; v = {10, 20, 30, 40, 50, 30, 60};
+
+    // 1. 从尾部删除
+    v.pop_back(); // 移除 60
+    std::cout &lt;&lt; "pop_back 后: ";
+    for(int n : v) std::cout &lt;&lt; n &lt;&lt; " "; // 10 20 30 40 50 30
+    std::cout &lt;&lt; std::endl;
+
+    // 2. 删除单个元素 (删除第一个30)
+    v.erase(v.begin() + 2);
+    std::cout &lt;&lt; "erase 单个元素后: ";
+    for(int n : v) std::cout &lt;&lt; n &lt;&lt; " "; // 10 20 40 50 30
+    std::cout &lt;&lt; std::endl;
+
+    // 3. 删除一个范围的元素 (删除 40, 50)
+    v.erase(v.begin() + 2, v.begin() + 4);
+    std::cout &lt;&lt; "erase 一个范围后: ";
+    for(int n : v) std::cout &lt;&lt; n &lt;&lt; " "; // 10 20 30
+    std::cout &lt;&lt; std::endl;
+
+    // 4. 清空容器
+    v.clear();
+    std::cout &lt;&lt; "clear 后，size = " &lt;&lt; v.size() &lt;&lt; ", capacity = " &lt;&lt; v.capacity() &lt;&lt; std::endl;
+
+    // 5. erase-remove idiom
+    std::vector&lt;int&gt; v2 = {1, 9, 2, 9, 3, 9, 4};
+    v2.erase(std::remove(v2.begin(), v2.end(), 9), v2.end());
+    std::cout &lt;&lt; "erase-remove idiom 后: ";
+    for(int n : v2) std::cout &lt;&lt; n &lt;&lt; " "; // 1 2 3 4
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>pop_back 后: 10 20 30 40 50 30
+erase 单个元素后: 10 20 40 50 30
+erase 一个范围后: 10 20 30
+clear 后，size = 0, capacity = 7
+erase-remove idiom 后: 1 2 3 4
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>erase 操作如何移动元素来填补空缺。</p>
+        <div class="graphviz">
+<pre><code>digraph Vector_Erase {
+    rankdir=LR;
+    node [fontname="SimHei"];
+
+    subgraph cluster_0 {
+        label = "erase 之前";
+        vec_before [shape=record, label="{<f0> 10 | <f1> 20 | <f2> 30 | <f3> 40 | <f4> 50}"];
+    }
+
+    subgraph cluster_1 {
+        label = "erase 之后";
+        vec_after [shape=record, label="{<f0> 10 | <f1> 20 | <f2> 40 | <f3> 50 | <f4> (无效)}"];
+    }
+
+    vec_before -> vec_after [label="vec.erase(vec.begin() + 2)\n(元素 30 被删除)"];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>对空 <code>vector</code> 调用 <code>pop_back</code> 是未定义行为。</li>
+                <li><code>erase()</code> 会使指向<strong>被删除元素以及它之后所有元素</strong>的迭代器、指针和引用全部失效。</li>
+                <li><code>erase()</code> 会返回一个指向被删除的最后一个元素的下一个位置的有效迭代器。在循环中删除元素时，必须使用此返回值来安全地继续遍历。</li>
+                <li><code>clear()</code> 将 <code>size()</code> 变为0，但通常不会改变 <code>capacity()</code>。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 如何高效删除 <code>vector</code> 中所有等于特定值的元素？</li>
+                <li><strong>答：</strong> 应该使用**“移除-删除”技巧（erase-remove idiom）。单独在循环中调用 <code>erase</code> 效率很低，因为每次删除都会移动后续所有元素。 <code>erase-remove idiom</code> 的写法是 <code>v.erase(std::remove(v.begin(), v.end(), value), v.end());</code>。它的工作原理是： <strong><code>std::remove</code> 算法会遍历一遍容器，将所有**不**被删除的元素移动到容器的开头，并返回一个指向“新”的逻辑尾端的迭代器。然后， <code>erase</code> 方法再从这个新的逻辑尾端一次性地删除后面所有“无用”的元素。这个过程总共只需要一次元素移动和一次删除，效率远高于循环调用 <code>erase</code>。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li><code>**pop_back()**</code>：用于实现类似栈的行为，或简单地移除最后一个元素。</li>
+                <li><code>**erase()**</code>：精确地移除一个或一段元素。</li>
+                <li><code>**clear()**</code>：快速清空容器，以便重新使用。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.3.9-vector-底层实现机制深度剖析"><code>2.3.9 vector 底层实现机制深度剖析</code></h2>
+        <blockquote>
+            <p>2.3.9</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::vector 的强大功能和高效性能源于其简洁而精妙的底层数据结构。尽管 C++ 标准没有强制规定其具体实现方式，但所有主流的标准库都采用了一种通用的模型，即通过三个指针来管理一块连续的动态内存。</p>
+        <p>这三个指针通常是：</p>
+        <ol>
+            <li><code>**_Myfirst**</code> (或类似名称如 <code>_begin</code>): 指向 <code>vector</code> 所分配的连续内存块的<strong>起始地址</strong>。它也就是 <code>begin()</code> 成员函数返回的迭代器所指向的位置。</li>
+            <li><code>**_Mylast**</code> (或类似名称如 <code>_finish</code>): 指向 <code>vector</code> 中最后一个有效元素的<strong>下一个位置</strong>。它也就是 <code>end()</code> 成员函数返回的迭代器所指向的位置。</li>
+            <li><code>**_Myend**</code> (或类似名称如 <code>_end_of_storage</code>): 指向 <code>vector</code> 所分配的连续内存块的<strong>结束地址</strong>（即末尾之后的位置）。</li>
+        </ol>
+        <p>通过这三个指针， <code>vector</code> 的所有核心状态都可以被高效地确定：</p>
+        <ul>
+            <li>大小 ( <strong><code>size</code>)</strong>: <code>_Mylast - _Myfirst</code> 的距离，即实际存储的元素数量。</li>
+            <li>容量 ( <strong><code>capacity</code>)</strong>: <code>_Myend - _Myfirst</code> 的距离，即在不重新分配内存的情况下最多能容纳的元素数量。</li>
+            <li>是否为空 ( <strong><code>empty</code>)</strong>: 当 <code>_Myfirst == _Mylast</code> 时。</li>
+        </ul>
+        <p>扩容的本质</p>
+        <p>当我们调用 push_back 并且 vector 已满 (size() == capacity()) 时，扩容过程的本质就是对这三个指针进行更新：</p>
+        <ol>
+            <li><code>vector</code> 根据其增长策略（例如，将容量翻倍）计算出一个新的容量大小。</li>
+            <li>在堆上申请一块能容纳新容量的、更大的连续内存。</li>
+            <li>将 <code>[_Myfirst, _Mylast)</code> 范围内的所有元素从旧内存区域拷贝或移动到新内存区域。</li>
+            <li>释放旧的内存区域。</li>
+            <li>更新 <code>_Myfirst</code>、 <code>_Mylast</code> 和 <code>_Myend</code> 这三个指针，让它们分别指向新内存区域的起始、新的逻辑结尾和总的结尾位置。</li>
+        </ol>
+        <p>这个过程解释了为什么在 <code>vector</code> 扩容后，所有指向旧 <code>vector</code> 元素的迭代器、指针和引用都会失效。</p>
+        <h4>【语法】</h4>
+        <p>我们可以用一个简化的类声明来理解这个三指针模型：</p>
+<pre><code class="language-cpp">template &lt;class T, class Allocator = std::allocator&lt;T&gt;&gt;
+class vector {
+protected:
+    T* _Myfirst; // 指向内存块的开头
+    T* _Mylast;  // 指向已用空间的末尾
+    T* _Myend;   // 指向已分配内存的末尾
+
+public:
+    // 迭代器
+    iterator begin() { return _Myfirst; }
+    iterator end() { return _Mylast; }
+
+    // 容量
+    size_type size() const { return _Mylast - _Myfirst; }
+    size_type capacity() const { return _Myend - _Myfirst; }
+
+    // ... 其他成员函数
+};
+</code></pre>
+        <p><em>(这是一个概念性表示，实际标准库的实现会更复杂)</em></p>
+        <h4>【代码】</h4>
+        <p>虽然我们无法直接访问这三个私有指针，但我们可以通过公共接口的变化来印证这个模型。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    std::vector&lt;int&gt; v;
+    std::cout &lt;&lt; "初始状态: \n";
+    std::cout &lt;&lt; "Size: " &lt;&lt; v.size() &lt;&lt; ", Capacity: " &lt;&lt; v.capacity() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "--------------------------------\n";
+
+    // 第一次添加元素
+    v.push_back(10);
+    std::cout &lt;&lt; "添加第一个元素后: \n";
+    std::cout &lt;&lt; "Size: " &lt;&lt; v.size() &lt;&lt; ", Capacity: " &lt;&lt; v.capacity() &lt;&lt; std::endl;
+    int* p_first_addr = v.data();
+    std::cout &lt;&lt; "内存地址: " &lt;&lt; p_first_addr &lt;&lt; std::endl;
+    std::cout &lt;&lt; "--------------------------------\n";
+
+    // 触发扩容
+    v.push_back(20); // 假设初始容量为1，此处会扩容
+    std::cout &lt;&lt; "添加第二个元素 (触发扩容) 后: \n";
+    std::cout &lt;&lt; "Size: " &lt;&lt; v.size() &lt;&lt; ", Capacity: " &lt;&lt; v.capacity() &lt;&lt; std::endl;
+    int* p_second_addr = v.data();
+    std::cout &lt;&lt; "新内存地址: " &lt;&lt; p_second_addr &lt;&lt; std::endl;
+
+    if (p_first_addr != p_second_addr) {
+        std::cout &lt;&lt; "结论: 内存地址已改变，发生了扩容！\n";
+    }
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+        <p>（地址和容量值可能因环境而异）</p>
+<pre><code>初始状态:
+Size: 0, Capacity: 0
+--------------------------------
+添加第一个元素后:
+Size: 1, Capacity: 1
+内存地址: 0x55b1f3e0f2d0
+--------------------------------
+添加第二个元素 (触发扩容) 后:
+Size: 2, Capacity: 2
+新内存地址: 0x55b1f3e0f310
+结论: 内存地址已改变，发生了扩容！
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>vector 的三指针实现模型示意图。</p>
+        <div class="graphviz">
+<pre><code>digraph Vector_Pointers {
+    node [fontname="SimHei"];
+
+    subgraph cluster_mem {
+        label="vector管理的连续内存空间";
+        mem [shape=record, label="<f0> E1 |<f1> E2 |<f2> E3 |<f3> (已用) |<f4> | <f5> |<f6> |<f7> (备用)"];
+    }
+
+    ptr_first [label="_Myfirst", shape=plaintext, style=filled, fillcolor=lightblue];
+    ptr_last [label="_Mylast", shape=plaintext, style=filled, fillcolor=green];
+    ptr_end [label="_Myend", shape=plaintext, style=filled, fillcolor=gold];
+
+    ptr_first -> mem:f0:n [label="begin()"];
+    ptr_last -> mem:f4:n [label="end()"];
+    ptr_end -> mem:f7:se [label="容量末端", tailport=n];
+
+    edge [style=dashed, arrowhead=none, fontcolor=blue];
+    node [shape=none, fontcolor=blue];
+
+    s_start -> mem:f0:s;
+    s_end -> mem:f3:s;
+    subgraph {
+        rank=same; s_start; s_end;
+        s_label [label="size() = _Mylast - _Myfirst"];
+    }
+
+    c_start -> mem:f0:s;
+    c_end -> mem:f7:s;
+    subgraph {
+        rank=same; c_start; c_end;
+        c_label [label="capacity() = _Myend - _Myfirst"];
+    }
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>三指针模型是理解 <code>vector</code> 行为的关键。它解释了为什么 <code>vector</code> 的随机访问是 O(1)（直接指针运算），而 <code>size()</code> 和 <code>capacity()</code> 也能在 O(1) 时间内完成。</li>
+                <li>正是这个模型清晰地揭示了迭代器失效的根本原因：扩容后，迭代器（通常是包装了指针 <code>T*</code> 的对象）仍然指向已被释放的旧内存，成为了“野指针”。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 为什么 <code>vector</code> 扩容时不是只增加一个元素的空间？</li>
+                <li><strong>答：</strong> 这是为了获得<strong>摊销常数时间</strong>的复杂度。如果每次 <code>push_back</code> 都只增加一个元素的空间，那么每次添加元素都可能需要移动之前的所有元素，这将使 <code>push_back</code> 的平均时间复杂度变为 O(n)，效率低下。通过每次将容量乘以一个固定的因子（如1.5或2）， <code>vector</code> 保证了在连续多次 <code>push_back</code> 操作中，内存重分配的次数会越来越稀少。将高昂的重分配成本“摊分”到多次廉价的添加操作上，其平均时间复杂度就接近于 O(1)。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>深入理解 <code>vector</code> 的性能特点，从而在性能敏感的应用中做出正确的技术决策（例如，何时使用 <code>reserve</code>）。</li>
+                <li>从根本上理解迭代器失效的原因，帮助你编写出更健壮、更安全的代码。</li>
+                <li>为学习其他 STL 容器（如 <code>string</code>，其实现也非常类似）和高级 C++ 编程打下坚实的基础。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.3.10-vector-特殊专题-swap-技巧与-vector-bool-避坑指南"><code>2.3.10 vector 特殊专题： swap 技巧与 vector&lt;bool&gt; 避坑指南</code></h2>
+        <blockquote>
+            <p>2.3.10</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>vector 的 swap 成员函数是一个非常高效的操作。当交换两个 vector 时，它并不会逐个交换容器内的所有元素，而是仅仅交换了两个 vector 内部的管理指针（即前一节提到的 _Myfirst, _Mylast, _Myend）。这意味着，无论 vector 中有多少元素，swap 操作的耗时都是固定的，其时间复杂度为常数阶 O(1)。</p>
+        <p>利用 <code>swap</code> 的这个特性，我们可以实现一个非常巧妙的技巧，用来回收 <code>vector</code> 中未使用的容量。这个技巧在 C++11 的 <code>shrink_to_fit()</code> 函数出现之前，是回收内存的标准做法。其步骤如下：</p>
+        <ol>
+            <li>创建一个临时的 <code>vector</code>，并用当前的 <code>vector</code> 进行拷贝构造。例如 <code>std::vector&lt;T&gt;(v)</code>。</li>
+            <li>这个临时 <code>vector</code> 在被创建时，会自动分配“刚刚好”的容量，使其 <code>capacity()</code> 等于其 <code>size()</code>。</li>
+            <li>调用 <code>v.swap()</code>，与这个临时的 <code>vector</code> 进行交换。</li>
+            <li>交换后， <code>v</code> 的内部指针指向了那个容量“刚刚好”的内存块。而那个临时的 <code>vector</code> 则持有了 <code>v</code> 之前的大容量内存块。</li>
+            <li>当该语句执行完毕后，临时的 <code>vector</code> 对象被销毁，其持有的（也就是 <code>v</code> 原来的）大容量内存被自动释放。</li>
+        </ol>
+        <p>通过这个过程，我们就巧妙地达到了“缩容”的目的。</p>
+        <h4>【语法】</h4>
+<pre><code class="language-cpp">// 成员函数
+void swap(vector&amp; other);
+
+// 全局函数
+template &lt;class T, class Alloc&gt;
+void swap(vector&lt;T, Alloc&gt;&amp; x, vector&lt;T, Alloc&gt;&amp; y);
+
+// "swap-to-fit" 技巧
+std::vector&lt;T&gt;(v).swap(v);
+</code></pre>
+        <h4>【代码】</h4>
+        <p>下面的代码演示了如何使用 swap 技巧来回收 vector 多余的容量。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt; // for std::swap
+
+void print_status(const std::vector&lt;int&gt;& v, const std::string& msg) {
+    std::cout &lt;&lt; msg &lt;&lt; " -> ";
+    std::cout &lt;&lt; "Size: " &lt;&lt; v.size() &lt;&lt; ", Capacity: " &lt;&lt; v.capacity() &lt;&lt; std::endl;
+}
+
+int main() {
+    std::vector&lt;int&gt; v;
+    v.reserve(100); // 预留100个元素的容量
+    v.push_back(1);
+    v.push_back(2);
+    v.push_back(3);
+
+    print_status(v, "初始状态");
+
+    // shrink_to_fit (C++11 推荐方式)
+    v.shrink_to_fit();
+    print_status(v, "shrink_to_fit() 后");
+
+    // 恢复大容量，演示 swap 技巧
+    v.reserve(100);
+    print_status(v, "\n再次 reserve(100) 后");
+
+    // 使用 swap 技巧回收内存
+    std::vector&lt;int&gt;(v).swap(v);
+    print_status(v, "swap 技巧回收后");
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>初始状态 -> Size: 3, Capacity: 100
+
+shrink_to_fit() 后 -> Size: 3, Capacity: 3
+
+再次 reserve(100) 后 -> Size: 3, Capacity: 100
+swap 技巧回收后 -> Size: 3, Capacity: 3
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>swap 技巧回收内存的流程图。</p>
+        <div class="graphviz">
+<pre><code>digraph Vector_Swap_Trick {
+    node [fontname="SimHei"];
+
+    subgraph cluster_before {
+        label = "1. Swap 之前";
+        v_before [shape=record, label="v | { <p> 指针 | size=3 | cap=100 }", style=filled, fillcolor=lightblue];
+        mem_before [shape=record, label="1 | 2 | 3 | ... | (大量备用空间)"];
+        v_before:p -> mem_before;
+    }
+
+    subgraph cluster_temp {
+        label = "2. 创建临时 vector: vector<int>(v)";
+        temp_obj [shape=record, label="temp | { <p> 指针 | size=3 | cap=3 }", style=filled, fillcolor=green];
+        mem_temp [shape=record, label="1 | 2 | 3"];
+        temp_obj:p -> mem_temp;
+    }
+
+    subgraph cluster_after {
+        label = "3. swap(v) 之后, temp 被销毁";
+        v_after [shape=record, label="v | { <p> 指针 | size=3 | cap=3 }", style=filled, fillcolor=lightblue];
+        mem_after [shape=record, label="1 | 2 | 3"];
+        mem_before_dead [label="旧的大内存被释放", style=dashed, color=gray];
+        v_after:p -> mem_after;
+    }
+
+    v_before -> temp_obj -> v_after [style=invis];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>swap</code> 操作会使两个 <code>vector</code> 的所有迭代器、指针和引用全部失效，因为它们仍然指向原来的内存块，但这些内存块已经属于另一个 <code>vector</code> 对象了。</li>
+                <li>在 C++11 及以后的标准中，虽然 <code>shrink_to_fit()</code> 是官方推荐的缩容方式，但理解 <code>swap</code> 技巧对于深入理解 <code>vector</code> 的内存模型非常有帮助。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>shrink_to_fit()</code> 和 <code>swap</code> 技巧哪个更好？</li>
+                <li><strong>答：</strong> 在 C++11 及以后的代码中，应优先使用 <code>shrink_to_fit()</code>，因为它意图明确，代码更具可读性。 <code>swap</code> 技巧是 C++11 之前的标准做法，现在更多地是作为一个展示 <code>vector</code> 工作原理的经典范例。两者在性能上通常没有显著差异。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>高效地交换两个 <code>vector</code> 的全部内容。</li>
+                <li>在需要精确控制内存使用的场景下，释放 <code>vector</code> 中因元素删除而产生的多余容量。</li>
+            </ul>
+        </div>
+        <hr>
+        <h4 id="vector-bool-避坑指南"><strong><code>vector&lt;bool&gt;</code> 避坑指南</strong></h4>
+        <h4>【原理/文字】</h4>
+        <p>std::vector 是 C++ 标准库中的一个“陷阱”。它是一个针对 bool 类型的模板特化版本，其行为与我们期望的标准 vector 容器有很大不同。</p>
+        <p>为了节省内存， <code>vector&lt;bool&gt;</code> 的实现并没有将每个 <code>bool</code> 值存储为独立的 <code>char</code> 或 <code>int</code>（通常占用1个字节），而是将它们<strong>打包</strong>存储，每个 <code>bool</code> 值只占用 <strong>1 个比特位 (bit)</strong>。这个看似巧妙的优化却带来了几个严重的问题，使得 <code>vector&lt;bool&gt;</code><strong>不符合</strong>标准容器的定义：</p>
+        <ol>
+            <li><strong>不返回真正的引用</strong>：由于 C++ 无法直接创建对单个比特位的引用 ( <code>bool&amp;</code>)， <code>vector&lt;bool&gt;::operator[]</code> 和 <code>vector&lt;bool&gt;::iterator::operator*</code> 返回的是一个<strong>代理对象（proxy object）</strong>。这个代理对象的行为类似于 <code>bool&amp;</code>，但它不是真正的引用。这会破坏很多期望获得真正引用的泛型代码。</li>
+            <li><strong>非连续存储（对元素而言）</strong>：虽然底层的位是连续存储在一个 <code>char</code> 或 <code>int</code> 数组中的，但你无法获得一个指向每个 <code>bool</code> 元素的 <code>bool*</code> 指针。这意味着 <code>&amp;v[0]</code> 这样的操作会编译失败， <code>data()</code> 方法也无法返回 <code>bool*</code>。</li>
+            <li><strong>可能更慢</strong>：访问单个比特位需要进行位掩码和位移运算，这可能比直接访问一个完整的字节要慢。因此，节省的空间可能以牺牲性能为代价。</li>
+        </ol>
+        <h4>【代码】</h4>
+        <p>下面的代码展示了 vector 的非标准行为。</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    std::vector&lt;bool&gt; v = {true};
+
+    // bool&amp; first_bit = v[0]; // 编译错误！v[0]返回的是一个代理对象，不是 bool&amp;
+
+    auto proxy = v[0]; // 使用 auto 可以接收这个代理对象
+    std::cout &lt;&lt; "v[0] is a proxy object, not a bool reference." &lt;&lt; std::endl;
+
+    // 代理对象可以模拟引用的行为
+    proxy = false;
+    std::cout &lt;&lt; "v[0] after modification: " &lt;&lt; v[0] &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+        <p>（直接编译 bool&amp; first_bit = v[0]; 会失败）</p>
+        <p>可运行代码的输出：</p>
+<pre><code>v[0] is a proxy object, not a bool reference.
+v[0] after modification: 0
+</code></pre>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <p>强烈建议：除非你明确知道你在做什么，并且节省内存至关重要，否则应始终避免使用 std::vector。</p>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 如果不能用 <code>vector&lt;bool&gt;</code>，我应该用什么来代替？</li>
+                <li><strong>答：</strong> 有几种优秀的替代方案：
+                    <ul>
+                        <li><code>**std::deque&lt;bool&gt;**</code>: <code>deque</code> 没有为 <code>bool</code> 做特化，它会为每个 <code>bool</code> 存储一个 <code>bool</code>（通常是一个字节），并且其行为完全符合标准容器的规范。这是最直接的替代品。</li>
+                        <li><code>**std::vector&lt;char&gt;**</code> 或 <code>**std::vector&lt;uint8_t&gt;**</code>: 如果你需要连续内存，可以使用一个字节大小的整型来存储 <code>0</code> 或 <code>1</code>。这种方式简单、高效且符合所有容器规范。</li>
+                        <li><code>**std::bitset**</code>: 如果你需要一个<strong>固定大小</strong>的位序列，并且经常进行位运算（与、或、非、移位等）， <code>std::bitset</code> 是为此场景设计的完美工具。</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <p>vector 的设计初衷是为了在需要大量布尔标志时，极大地节省内存空间。然而，由于其设计上的缺陷和非标准行为，它在实际项目中的应用非常有限，并且通常被其他更可靠的方案所取代。</p>
+        </div>
+        <hr>
+        <h1 id="2.4-deque-容器">2.4 deque 容器</h1>
+        <blockquote></blockquote>
+        <h2 id="2.4.1-deque-双端队列容器"><code>2.4.1 deque：双端队列容器</code></h2>
+        <blockquote>
+            <p>2.4.1</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::deque 是 "double-ended queue"（双端队列）的缩写。它是一个与 vector 非常相似但又独具特色的序列式容器。</p>
+        <p><code>deque</code> 的核心特性：</p>
+        <ol>
+            <li><strong>双端操作高效</strong>：这是 <code>deque</code> 最显著的优点。它支持在容器的<strong>头部和尾部</strong>进行快速的插入和删除操作，时间复杂度均为摊销常数阶 O(1)。</li>
+            <li><strong>支持随机访问</strong>：和 <code>vector</code> 一样， <code>deque</code> 也支持通过下标（ <code>[]</code> 或 <code>at()</code>）快速访问任意元素，时间复杂度为 O(1)。</li>
+            <li><strong>非连续内存</strong>：这是它和 <code>vector</code> 的根本区别。 <code>vector</code> 的所有元素保证存储在一块连续的内存中，而 <code>deque</code> 的内存模型则更为复杂。它通常由多个连续的、固定大小的内存块（chunks）组成，并通过一个额外的管理结构（通常是一个指针数组，称为“中控器”或 map）将这些块串联起来。</li>
+        </ol>
+        <p>这个独特的内存结构赋予了 <code>deque</code> 在头部高效操作的能力，但也使其迭代器比 <code>vector</code> 的更复杂，并且失去了 <code>data()</code> 成员函数。</p>
+        <h4>【语法】</h4>
+        <p>要使用 deque 容器，必须包含  头文件。</p>
+<pre><code class="language-cpp">#include &lt;deque&gt;
+using namespace std; // 可选，为了方便
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>deque 支持在两端高效地添加和删除元素。</p>
+        <div class="graphviz">
+<pre><code>digraph Deque_Concept {
+    rankdir=LR;
+    node [fontname="SimHei"];
+
+    subgraph cluster_deque {
+        label = "deque 容器";
+        dq [shape=record, label="<f0> E1 | <f1> E2 | <f2> E3 | <f3> E4"];
+    }
+
+    push_front [label="push_front()", shape=ellipse, style=filled, fillcolor=green];
+    push_back [label="push_back()", shape=ellipse, style=filled, fillcolor=green];
+    pop_front [label="pop_front()", shape=ellipse, style=filled, fillcolor=lightcoral];
+    pop_back [label="pop_back()", shape=ellipse, style=filled, fillcolor=lightcoral];
+
+    push_front -> dq:f0:w [label="头部添加 (高效)"];
+    dq:f0:w -> pop_front [label="头部删除 (高效)"];
+    dq:f3:e -> push_back [label="尾部添加 (高效)"];
+    pop_back -> dq:f3:e [label="尾部删除 (高效)"];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>由于内存非连续， <code>deque</code> 没有 <code>data()</code> 成员函数，不能保证通过 <code>&amp;dq[0]</code> 的方式获得一个指向整个数据序列的连续指针。</li>
+                <li><code>deque</code> 也没有 <code>capacity()</code> 和 <code>reserve()</code> 成员函数，其内存管理机制比 <code>vector</code> 更为复杂和自动化。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>vector</code> 和 <code>deque</code> 该如何选择？</li>
+                <li><strong>答：</strong>
+                    <ul>
+                        <li>如果你只需要在<strong>尾部</strong>添加/删除元素，并且非常关心内存的紧凑性（例如，需要和 C API 交互）， <code>vector</code> 通常是更好的选择。</li>
+                        <li>如果你需要在<strong>头部和尾部</strong>都进行频繁的添加/删除操作，那么 <code>deque</code> 是不二之选。</li>
+                        <li>如果你需要在<strong>中间</strong>频繁地插入/删除，那么 <code>vector</code> 和 <code>deque</code> 的性能都会很差，此时应该考虑使用 <code>std::list</code>。</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>实现队列（Queue）和栈（Stack）等数据结构， <code>std::queue</code> 和 <code>std::stack</code> 默认就使用 <code>deque</code> 作为底层容器。</li>
+                <li>用于需要高效地在序列两端进行操作的场景，例如任务调度、日志记录等。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.4.2-deque-容器的创建与初始化"><code>2.4.2 deque 容器的创建与初始化</code></h2>
+        <blockquote>
+            <p>2.4.2</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::deque 的创建和初始化方式与 std::vector 高度相似，同样提供了多种构造函数来满足不同的需求。</p>
+        <h4>【语法】</h4>
+        <p>deque 的构造函数与 vector 的几乎完全相同：</p>
+        <ol>
+            <li>
+                <p><strong>创建空容器</strong>：</p>
+<pre><code class="language-cpp">std::deque&lt;T&gt; dq;
+</code></pre>
+            </li>
+            <li>
+                <p><strong>创建指定数量元素的容器</strong>：</p>
+<pre><code class="language-cpp">std::deque&lt;T&gt; dq(n);         // 创建 n 个值初始化的元素
+std::deque&lt;T&gt; dq(n, val);    // 创建 n 个值为 val 的元素
+</code></pre>
+            </li>
+            <li>
+                <p><strong>使用初始化列表 (C++11)</strong>：</p>
+<pre><code class="language-cpp">std::deque&lt;T&gt; dq {v1, v2, ...};
+</code></pre>
+            </li>
+            <li>
+                <p><strong>拷贝和移动构造</strong>：</p>
+<pre><code class="language-cpp">std::deque&lt;T&gt; dq2(dq1);
+</code></pre>
+            </li>
+            <li>
+                <p><strong>从其他迭代器范围创建</strong>：</p>
+<pre><code class="language-cpp">std::deque&lt;T&gt; dq(first, last);
+</code></pre>
+            </li>
+        </ol>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;deque&gt;
+#include &lt;vector&gt;
+#include &lt;array&gt;
+
+template&lt;typename T&gt;
+void print_deque(const std::string& name, const std::deque&lt;T&gt;& dq) {
+    std::cout &lt;&lt; name &lt;&lt; " (size=" &lt;&lt; dq.size() &lt;&lt; "): ";
+    for (const auto& element : dq) {
+        std::cout &lt;&lt; element &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+}
+
+int main() {
+    // 1. 创建空容器
+    std::deque&lt;int&gt; d1;
+    print_deque("d1 (空容器)", d1);
+
+    // 2. 创建含n个元素的容器
+    std::deque&lt;int&gt; d2(5, 100);
+    print_deque("d2 (5个100)", d2);
+
+    // 3. 使用初始化列表
+    std::deque&lt;int&gt; d3 {1, 2, 3, 4, 5};
+    print_deque("d3 (初始化列表)", d3);
+
+    // 4. 拷贝构造
+    std::deque&lt;int&gt; d4(d3);
+    print_deque("d4 (拷贝自 d3)", d4);
+
+    // 5. 从其他容器的迭代器范围创建
+    std::array&lt;int, 3&gt; arr = {11, 22, 33};
+    std::deque&lt;int&gt; d5(arr.begin(), arr.end());
+    print_deque("d5 (来自 array)", d5);
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>d1 (空容器) (size=0):
+d2 (5个100) (size=5): 100 100 100 100 100
+d3 (初始化列表) (size=5): 1 2 3 4 5
+d4 (拷贝自 d3) (size=5): 1 2 3 4 5
+d5 (来自 array) (size=3): 11 22 33
+</code></pre>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>与 <code>vector</code> 一样， <code>deque</code> 的 <code>()</code> 和 <code>{}</code> 初始化也存在歧义。 <code>deque&lt;int&gt; d(10, 5)</code> 表示创建10个值为5的元素，而 <code>deque&lt;int&gt; d{10, 5}</code> 表示创建2个元素，值分别为10和5。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 创建 <code>deque</code> 和 <code>vector</code> 在语法上有什么不同？</li>
+                <li><strong>答：</strong> 在构造函数的语法层面，两者几乎没有区别，可以相互替换。它们的根本差异在于底层的内存模型和性能特性，而非创建语法。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>根据不同的初始数据源，灵活地创建 <code>deque</code> 实例。</li>
+                <li>作为 <code>vector</code> 的一个备选项，在需要双端操作时提供相同的创建便利性。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.4.3-deque-容器的成员函数"><code>2.4.3 deque 容器的成员函数</code></h2>
+        <blockquote>
+            <p>2.4.3</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>deque 的成员函数集与 vector 非常相似，但根据其双端操作的特性做了一些调整。</p>
+        <h4>【语法】</h4>
+        <p>下表是 deque 常用成员函数的概览，并与 vector 进行了对比。</p>
+        <table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>类别</strong></td>
+<td><strong>成员函数</strong></td>
+<td><strong>deque vs vector 对比</strong></td>
+</tr>
+<tr>
+<td><strong>迭代器</strong></td>
+<td><code>begin/end</code>, <code>rbegin/rend</code>...</td>
+<td>相同，都提供随机访问迭代器。</td>
+</tr>
+<tr>
+<td><strong>容量</strong></td>
+<td><code>size()</code>, <code>empty()</code>, <code>max_size()</code></td>
+<td>相同。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>shrink_to_fit()</code></td>
+<td>相同，用于请求释放多余内存。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>capacity()</code>, <code>reserve()</code></td>
+<td><strong><code>deque</code> 不提供这两个函数。</strong></td>
+</tr>
+<tr>
+<td><strong>元素访问</strong></td>
+<td><code>operator[]</code>, <code>at()</code>, <code>front()</code>, <code>back()</code></td>
+<td>相同。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>data()</code></td>
+<td><strong><code>deque</code> 不提供此函数。</strong></td>
+</tr>
+<tr>
+<td><strong>修改器</strong></td>
+<td><code>push_back()</code>, <code>pop_back()</code></td>
+<td>相同，在尾部添加/删除。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>push_front()</code>, <code>*pop_front()*</code></td>
+<td><strong><code>deque</code> 特有</strong>，在头部高效地添加/删除。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>insert()</code>, <code>emplace()</code>...</td>
+<td>相同，但 <code>deque</code> 在中间插入/删除效率同样很低。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>clear()</code>, <code>swap()</code>, <code>assign()</code></td>
+<td>相同。</td>
+</tr>
+</tbody>
+</table>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;deque&gt;
+
+int main() {
+    std::deque&lt;int&gt; d;
+
+    // 尾部添加
+    d.push_back(10);
+    d.push_back(20);
+    // 头部添加
+    d.push_front(1);
+    d.push_front(2); // deque 内容: 2 1 10 20
+
+    std::cout &lt;&lt; "当前 deque 内容: ";
+    for (int val : d) {
+        std::cout &lt;&lt; val &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    std::cout &lt;&lt; "头部元素: " &lt;&lt; d.front() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "尾部元素: " &lt;&lt; d.back() &lt;&lt; std::endl;
+
+    // 头部删除
+    d.pop_front(); // deque 内容: 1 10 20
+    // 尾部删除
+    d.pop_back();  // deque 内容: 1 10
+
+    std::cout &lt;&lt; "最终 deque 内容: ";
+    for (int val : d) {
+        std::cout &lt;&lt; val &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>当前 deque 内容: 2 1 10 20
+头部元素: 2
+尾部元素: 20
+最终 deque 内容: 1 10
+</code></pre>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li>虽然 <code>deque</code> 也支持在中间 <code>insert</code>，但这同样是一个低效操作，需要移动元素。</li>
+                <li>在头部或尾部增删元素，<strong>通常不会</strong>使迭代器失效。但如果操作导致中控器（map）需要重新分配内存，则<strong>所有</strong>迭代器都会失效（不过这种情况很少见）。在中间插入或删除元素，则<strong>总是</strong>会使所有迭代器失效。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 为什么 <code>deque</code> 没有 <code>capacity()</code> 和 <code>reserve()</code>？</li>
+                <li><strong>答：</strong> 因为 <code>deque</code> 的分块内存模型使得“容量”这个概念变得复杂。它没有一个单一的连续内存块可以预留。 <code>deque</code> 的内存是按需、分块地进行管理的，所以 <code>reserve</code> 这样的预留操作对它来说没有意义。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li><code>push_front</code> 和 <code>pop_front</code> 是 <code>deque</code> 的标志性功能，用于实现高效的双端队列。</li>
+                <li>其他成员函数提供了与 <code>vector</code> 类似的通用序列容器操作能力。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.4.4-deque-容器访问元素的方法"><code>2.4.4 deque 容器访问元素的方法</code></h2>
+        <blockquote>
+            <p>2.4.4</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>deque 容器提供了和 vector、array 完全相同的元素访问接口。尽管其底层内存不是连续的，但 deque 通过其巧妙的“中控器”设计，仍然能够提供高效的随机访问能力，使得通过下标访问任意元素的时间复杂度为 O(1)。</p>
+        <p>主要的访问方法包括：</p>
+        <ul>
+            <li><code>operator[]</code>: 通过下标访问，不进行边界检查。</li>
+            <li><code>at()</code>: 通过下标访问，进行边界检查，更安全。</li>
+            <li><code>front()</code>: 访问第一个元素。</li>
+            <li><code>back()</code>: 访问最后一个元素。</li>
+        </ul>
+        <h4>【语法】</h4>
+<pre><code class="language-cpp">// 1. operator[] 和 at()
+T&amp; operator[size_type n](size_type n);
+T&amp; at(size_type n);
+
+// 2. front() 和 back()
+T&amp; front();
+T&amp; back();
+</code></pre>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;deque&gt;
+
+int main() {
+    std::deque&lt;int&gt; d = {10, 20, 30, 40, 50};
+
+    // 使用 at() 和 [] 访问和修改元素
+    std::cout &lt;&lt; "d.at(1) = " &lt;&lt; d.at(1) &lt;&lt; std::endl;
+    d[1] = 200;
+    std::cout &lt;&lt; "修改后 d[1] = " &lt;&lt; d[1] &lt;&lt; std::endl;
+
+    // 使用 front() 和 back()
+    std::cout &lt;&lt; "头部元素: " &lt;&lt; d.front() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "尾部元素: " &lt;&lt; d.back() &lt;&lt; std::endl;
+
+    d.front() = 100;
+
+    std::cout &lt;&lt; "最终 deque 内容: ";
+    for (int val : d) {
+        std::cout &lt;&lt; val &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>d.at(1) = 20
+修改后 d[1] = 200
+头部元素: 10
+尾部元素: 50
+最终 deque 内容: 100 200 30 40 50
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>deque 提供了和 vector 类似的随机访问接口。</p>
+        <div class="graphviz">
+<pre><code>digraph Deque_Access {
+    node [fontname="SimHei"];
+    dq [shape=record, label="<f0> d[0]\nd.front() | <f1> d[1]\nd.at(1) | <f2> d[2] | ... | <fN> d[N-1]\nd.back()"];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>deque</code> 没有 <code>data()</code> 成员函数。因为它的元素不保证存储在单一的连续内存块中，所以无法提供一个指向整个序列头部的原生指针。</li>
+                <li>与 <code>vector</code> 一样， <code>at()</code> 比 <code>[]</code> 更安全，但有微小的性能开销。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 既然 <code>deque</code> 内存不连续，为什么它的 <code>operator[]</code> 还能做到 O(1) 的时间复杂度？</li>
+                <li><strong>答：</strong> <code>deque</code> 内部有一个称为“中控器”的指针数组。访问 <code>d[i]</code> 时，它会通过简单的整数运算（ <code>i / block_size</code> 和 <code>i % block_size</code>）快速定位到元素所在的内存块和块内偏移量。这个过程只需要几次计算和指针解引用，其时间与 <code>deque</code> 的总大小无关，因此是 O(1) 的常数时间操作。虽然比 <code>vector</code> 的单次指针偏移慢一点，但复杂度的量级是一样的。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>在需要双端修改的同时，也需要快速随机访问元素的场景。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.4.5-deque-容器添加和删除元素"><code>2.4.5 deque 容器添加和删除元素</code></h2>
+        <blockquote>
+            <p>2.4.5</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>本节整合了 deque 的所有修改器函数。deque 最核心的优势在于其双端操作的高效性。</p>
+        <ul>
+            <li><strong>两端操作</strong>： <code>push_front()</code>, <code>pop_front()</code>, <code>push_back()</code>, <code>pop_back()</code>, <code>emplace_front()</code>, <code>emplace_back()</code>。这些操作的摊销时间复杂度都是 O(1)。</li>
+            <li><strong>中间操作</strong>： <code>insert()</code>, <code>emplace()</code>, <code>erase()</code>。与 <code>vector</code> 相同，这些操作是低效的，因为它们需要移动被操作点之后的所有元素，时间复杂度为 O(n)。</li>
+        </ul>
+        <h4>【语法】</h4>
+<pre><code class="language-cpp">// 头部操作
+void push_front(const T&amp; val);
+void pop_front();
+
+// 尾部操作
+void push_back(const T&amp; val);
+void pop_back();
+
+// C++11 高效操作
+template &lt;class... Args&gt; void emplace_front(Args&amp;&amp;... args);
+template &lt;class... Args&gt; void emplace_back(Args&amp;&amp;... args);
+
+// 中间操作
+iterator insert(const_iterator pos, const T&amp; val);
+iterator erase(const_iterator pos);
+// ... 以及其他重载版本
+</code></pre>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;deque&gt;
+
+int main() {
+    std::deque&lt;int&gt; d;
+
+    // 演示双端添加
+    d.push_back(10);    // d: {10}
+    d.push_front(1);   // d: {1, 10}
+    d.emplace_back(20);  // d: {1, 10, 20}
+    d.emplace_front(2);  // d: {2, 1, 10, 20}
+
+    std::cout &lt;&lt; "双端添加后: ";
+    for (int val : d) std::cout &lt;&lt; val &lt;&lt; " ";
+    std::cout &lt;&lt; std::endl;
+
+    // 在中间插入
+    d.insert(d.begin() + 2, 99); // d: {2, 1, 99, 10, 20}
+    std::cout &lt;&lt; "中间插入后: ";
+    for (int val : d) std::cout &lt;&lt; val &lt;&lt; " ";
+    std::cout &lt;&lt; std::endl;
+
+    // 演示双端删除
+    d.pop_front(); // d: {1, 99, 10, 20}
+    d.pop_back();  // d: {1, 99, 10}
+    std::cout &lt;&lt; "双端删除后: ";
+    for (int val : d) std::cout &lt;&lt; val &lt;&lt; " ";
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>双端添加后: 2 1 10 20
+中间插入后: 2 1 99 10 20
+双端删除后: 1 99 10
+</code></pre>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><strong>迭代器失效</strong>：
+                    <ul>
+                        <li>在 <code>deque</code> 的<strong>两端</strong>进行插入操作，<strong>不会</strong>使指向其他元素的指针和引用失效，但<strong>可能</strong>会使所有迭代器失效（仅当中控器重分配时）。</li>
+                        <li>在 <code>deque</code> 的<strong>中间</strong>进行插入或删除操作，<strong>会使所有</strong>的迭代器、指针和引用失效。</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>灵活地从容器的两端或中间增删元素，以动态地维护数据序列。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.4.6-deque-容器的迭代器使用"><code>2.4.6 deque 容器的迭代器使用</code></h2>
+        <blockquote>
+            <p>2.4.6</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>deque 提供的是随机访问迭代器，这意味着它的迭代器在功能上与 vector 的迭代器兼容，支持所有指针算术运算。</p>
+        <p>然而， <code>deque</code> 迭代器的内部结构要复杂得多。它不仅要指向当前元素，还必须知道当前内存块的边界，并持有一个指向“中控器”的指针，以便在跨越内存块边界时能够正确地跳转到下一个或上一个块。尽管实现复杂，但这些细节对用户是透明的。</p>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;deque&gt;
+
+int main() {
+    std::deque&lt;int&gt; d = {10, 20, 30, 40, 50};
+
+    // 获取迭代器
+    auto it = d.begin() + 2; // 随机访问，直接跳到元素30
+    std::cout &lt;&lt; "it 指向: " &lt;&lt; *it &lt;&lt; std::endl;
+
+    // 修改元素
+    *it = 300;
+
+    // 迭代器失效演示
+    auto first = d.begin();
+    d.insert(d.begin() + 1, 99); // 在中间插入，所有迭代器失效
+
+    std::cout &lt;&lt; "插入后，deque 内容: ";
+    for (int val : d) std::cout &lt;&lt; val &lt;&lt; " ";
+    std::cout &lt;&lt; std::endl;
+
+    // std::cout &lt;&lt; *first &lt;&lt; std::endl; // 危险！first 迭代器已失效
+
+    // 必须重新获取迭代器
+    first = d.begin();
+    std::cout &lt;&lt; "重新获取后，first 指向: " &lt;&lt; *first &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>it 指向: 30
+插入后，deque 内容: 10 99 20 300 40 50
+重新获取后，first 指向: 10
+</code></pre>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <p>使用 deque 迭代器时，必须时刻警惕其失效规则，尤其是在进行中间插入和删除时。</p>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>deque</code> 迭代器和 <code>vector</code> 迭代器用起来有什么区别？</li>
+                <li><strong>答：</strong> 从<strong>语法和功能</strong>上说，它们用起来几乎一样，都支持随机访问。但从<strong>性能和失效规则</strong>上说， <code>deque</code> 的迭代器因为内部结构更复杂，其自增、自减和算术运算的成本会略高于 <code>vector</code> 的迭代器。同时，它的迭代器失效规则也更复杂。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>与 STL 算法配合，对 <code>deque</code> 内容进行操作。</li>
+                <li>实现需要随机访问能力的遍历和查找。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.4.7-deque-底层实现机制深度剖析"><code>2.4.7 deque 底层实现机制深度剖析</code></h2>
+        <blockquote>
+            <p>2.4.7</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>deque 的底层实现是其所有特性的根源。它采用了一种分块数组或二级数组的结构。</p>
+        <ol>
+            <li><strong>数据块 (Blocks/Chunks)</strong>： <code>deque</code> 将其实际元素存储在多个固定大小的连续内存块中。每个块都是一个小的数组。</li>
+            <li><strong>中控器 (Map)</strong>： <code>deque</code> 拥有一个核心的管理结构，称为“中控器”（map of pointers），它本身也是一块连续的内存（一个数组）。这个数组中不存储元素数据，而是存储指向各个数据块的<strong>指针</strong>。</li>
+        </ol>
+        <p>当在 <code>deque</code> 的<strong>尾部</strong>添加元素时，如果当前最后一个数据块有空间，则直接放入；如果满了， <code>deque</code> 只需再申请一个新的数据块，并将新块的地址存放到中控器的下一个位置。在<strong>头部</strong>添加元素也是同理。这种设计避免了像 <code>vector</code> 那样需要移动全部元素，因此两端操作非常高效。</p>
+        <p>随机访问 <code>d[i]</code> 也是通过中控器实现的：首先通过 <code>i / block_size</code> 快速定位到中控器中的第 <code>k</code> 个指针，从而找到对应的数据块；然后通过 <code>i % block_size</code> 在该数据块内找到元素的最终位置。</p>
+        <h4>【图示（概念）】</h4>
+        <p>deque 的分块存储结构示意图。</p>
+        <div class="graphviz">
+<pre><code>digraph Deque_Internal {
+    rankdir=TB;
+    node [fontname="SimHei"];
+
+    subgraph cluster_map {
+        label = "中控器 (指针的数组)";
+        map [shape=record, label="<p0> | <p1> | <p2> | <p3>"];
+    }
+
+    subgraph cluster_blocks {
+        label = "数据块 (固定大小的缓冲区)";
+        node [shape=record];
+        block0 [label="E1 | E2 | E3"];
+        block1 [label="E4 | E5 | E6"];
+        block2 [label="E7 | E8 | E9"];
+    }
+
+    map:p0 -> block0 [label="指向"];
+    map:p1 -> block1;
+    map:p2 -> block2;
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>deque</code> 的每个元素都会有两次指针间接寻址（一次在中控器，一次在数据块），而 <code>vector</code> 只有一次。这导致 <code>deque</code> 的随机访问虽然复杂度是 O(1)，但其常数时间成本通常高于 <code>vector</code>。</li>
+                <li><code>deque</code> 的内存占用通常会比 <code>vector</code> 稍高，因为它有中控器的额外开销，且首尾数据块可能未被完全填满。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 为什么 <code>deque</code> 的中间插入/删除和 <code>vector</code> 一样慢？</li>
+                <li><strong>答：</strong> 如果在某个数据块的中间插入元素，仍然需要移动该数据块内的后续元素。更糟糕的是，如果这个块满了，可能需要移动后续所有数据块中的所有元素，这仍然是 O(n) 的操作，与 <code>vector</code> 的原理类似。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>深入理解 <code>deque</code> 的内存模型有助于彻底明白其与 <code>vector</code> 之间的性能权衡，从而在需要“随机访问”和“双端增删”的场景下做出最合适的选择。</li>
+            </ul>
+        </div>
+        <hr>
+        <h1 id="2.5-list-容器">2.5 list 容器</h1>
+        <blockquote></blockquote>
+        <h2 id="2.5.1-list-双向链表容器"><code>2.5.1 list：双向链表容器</code></h2>
+        <blockquote>
+            <p>2.5.1</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::list 容器，通常被称为“双向链表容器”，其底层数据结构是一个双向链表。这是它与 vector、deque 最根本的区别。</p>
+        <p><code>list</code> 的核心特性：</p>
+        <ol>
+            <li><strong>非连续内存存储</strong>： <code>list</code> 的每个元素（节点）都在内存中单独分配，它们通过指针相互连接。元素在物理内存上是分散的，而不是存储在一段连续的空间里。</li>
+            <li><strong>不支持随机访问</strong>：由于内存不连续， <code>list</code><strong>不支持</strong>通过下标（ <code>operator[]</code> 或 <code>at()</code>）进行快速随机访问。要访问第 n 个元素，必须从头或尾开始，沿着指针逐个遍历，时间复杂度为 O(n)。</li>
+            <li><strong>任意位置插入/删除极为高效</strong>：这是 <code>list</code> 最核心的优势。一旦你拥有一个指向特定位置的迭代器，在此位置插入或删除元素的操作都只需要重新链接几个指针，而无需移动任何其他元素。因此，其时间复杂度是常数阶 O(1)。</li>
+        </ol>
+        <h4>【语法】</h4>
+        <p>要使用 list 容器，必须包含  头文件。</p>
+<pre><code class="language-cpp">#include &lt;list&gt;
+using namespace std; // 可选
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>list 容器的底层双向链表结构示意图。</p>
+        <div class="graphviz">
+<pre><code>digraph List_Concept {
+    rankdir=LR;
+    node [shape=record, fontname="SimHei"];
+
+    start [label="NULL", shape=plaintext];
+    end [label="NULL", shape=plaintext];
+
+    node1 [label="{ <prev> | E1 | <next> }"];
+    node2 [label="{ <prev> | E2 | <next> }"];
+    node3 [label="{ <prev> | E3 | <next> }"];
+
+    start -> node1:prev [style=dashed];
+    node1:next -> node2:prev [dir=both];
+    node2:next -> node3:prev [dir=both];
+    node3:next -> end [style=dashed];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>list</code> 的主要代价是牺牲了随机访问能力，来换取在任意位置都能高效插入和删除的特性。</li>
+                <li>由于每个元素都需要额外存储前向和后向指针， <code>list</code> 的内存开销通常比 <code>vector</code> 或 <code>deque</code> 要大。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> <code>vector</code> 和 <code>list</code> 该如何选择？</li>
+                <li><strong>答：</strong>
+                    <ul>
+                        <li>如果你的主要操作是随机访问元素，并且只在序列<strong>末尾</strong>进行添加或删除，那么 <code>vector</code> 是最佳选择。</li>
+                        <li>如果你需要频繁地在序列的<strong>任意位置</strong>（尤其是中间位置）进行插入和删除操作，并且不常需要随机访问，那么 <code>list</code> 的性能将远超 <code>vector</code>。</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>当需要对一个集合进行大量非头尾的插入和删除操作时， <code>list</code> 是理想的容器。</li>
+                <li>例如，文本编辑器中存储文本行，可以方便地在任意两行之间插入或删除新行。</li>
+                <li>实现某些需要高效拼接或拆分序列的算法。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.5.2-list-容器的创建与初始化"><code>2.5.2 list 容器的创建与初始化</code></h2>
+        <blockquote>
+            <p>2.5.2</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::list 的创建和初始化语法与 vector 和 deque 保持了高度的一致性，同样非常灵活。</p>
+        <h4>【语法】</h4>
+        <p>list 的构造函数与 vector 基本相同：</p>
+<pre><code class="language-cpp">// 1. 创建空容器
+std::list&lt;T&gt; l;
+// 2. 创建包含 n 个元素的容器
+std::list&lt;T&gt; l(n, val);
+// 3. 使用初始化列表 (C++11)
+std::list&lt;T&gt; l {v1, v2, ...};
+// 4. 拷贝构造
+std::list&lt;T&gt; l2(l1);
+// 5. 从其他迭代器范围创建
+std::list&lt;T&gt; l(first, last);
+</code></pre>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;list&gt;
+#include &lt;vector&gt;
+
+template&lt;typename T&gt;
+void print_list(const std::string& name, const std::list&lt;T&gt;& l) {
+    std::cout &lt;&lt; name &lt;&lt; " (size=" &lt;&lt; l.size() &lt;&lt; "): ";
+    for (const auto& element : l) {
+        std::cout &lt;&lt; element &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+}
+
+int main() {
+    // 1. 创建空 list
+    std::list&lt;int&gt; l1;
+    print_list("l1 (空容器)", l1);
+
+    // 2. 创建包含5个值为100的元素的 list
+    std::list&lt;int&gt; l2(5, 100);
+    print_list("l2 (5个100)", l2);
+
+    // 3. 拷贝构造
+    std::list&lt;int&gt; l3(l2);
+    print_list("l3 (拷贝自 l2)", l3);
+
+    // 4. 从其他容器的迭代器范围创建
+    std::vector&lt;int&gt; v = {11, 22, 33};
+    std::list&lt;int&gt; l4(v.begin(), v.end());
+    print_list("l4 (来自 vector)", l4);
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>l1 (空容器) (size=0):
+l2 (5个100) (size=5): 100 100 100 100 100
+l3 (拷贝自 l2) (size=5): 100 100 100 100 100
+l4 (来自 vector) (size=3): 11 22 33
+</code></pre>
+        <hr>
+        <h2 id="2.5.3-list-容器的成员函数"><code>2.5.3 list 容器的成员函数</code></h2>
+        <blockquote>
+            <p>2.5.3</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>list 不仅提供了标准序列容器的通用接口，还拥有许多基于其链表特性的独有成员函数，这些函数通常非常高效。</p>
+        <h4>【语法】</h4>
+        <p>list 的成员函数除了包含 push_back/pop_back、push_front/pop_front、insert、erase 等外，还包括以下特殊函数：</p>
+        <table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>成员函数</strong></td>
+<td><strong>功能描述</strong></td>
+<td><strong>复杂度</strong></td>
+</tr>
+<tr>
+<td><code>splice()</code></td>
+<td>将另一个 <code>list</code> 的元素（全部或部分）“剪接”到当前 <code>list</code> 的指定位置，<strong>操作本身不涉及元素的拷贝和构造</strong>。</td>
+<td>O(1)或O(n)</td>
+</tr>
+<tr>
+<td><code>remove(val)</code></td>
+<td>移除所有等于 <code>val</code> 的元素。</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><code>remove_if(pred)</code></td>
+<td>移除所有令一元谓词 <code>pred</code> 返回 <code>true</code> 的元素。</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><code>unique()</code></td>
+<td>移除连续的重复元素，只保留一个。</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><code>merge(other)</code></td>
+<td>合并另一个<strong>已排序</strong>的 <code>list</code> 到当前 <code>list</code>，合并后依然有序。</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><code>sort()</code></td>
+<td>对 <code>list</code> 内部的元素进行排序。</td>
+<td>O(NlogN)</td>
+</tr>
+<tr>
+<td><code>reverse()</code></td>
+<td>反转 <code>list</code> 中元素的顺序。</td>
+<td>O(n)</td>
+</tr>
+</tbody>
+</table>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;list&gt;
+
+int main() {
+    std::list&lt;int&gt; l = {20, 10, 30, 20, 40};
+
+    // list 独有的 sort 成员函数
+    l.sort();
+    std::cout &lt;&lt; "sort 后: ";
+    for (int n : l) std::cout &lt;&lt; n &lt;&lt; " "; // 10 20 20 30 40
+    std::cout &lt;&lt; std::endl;
+
+    // unique 移除连续重复元素
+    l.unique();
+    std::cout &lt;&lt; "unique 后: ";
+    for (int n : l) std::cout &lt;&lt; n &lt;&lt; " "; // 10 20 30 40
+    std::cout &lt;&lt; std::endl;
+
+    // remove 移除所有值为40的元素
+    l.remove(40);
+    std::cout &lt;&lt; "remove(40) 后: ";
+    for (int n : l) std::cout &lt;&lt; n &lt;&lt; " "; // 10 20 30
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>sort 后: 10 20 20 30 40
+unique 后: 10 20 30 40
+remove(40) 后: 10 20 30
+</code></pre>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 为什么 <code>list</code> 有自己的 <code>sort</code> 成员函数，而不像 <code>vector</code> 那样使用全局的 <code>std::sort</code>？</li>
+                <li><strong>答：</strong> 全局的 <code>std::sort</code> 算法要求传入随机访问迭代器，以便能快速跳跃和交换任意两个元素。 <code>list</code> 只提供双向迭代器，无法满足此要求。因此， <code>list</code> 提供了自己特别实现的 <code>sort</code> 成员函数，该函数通过在链表内部重新调整指针链接来实现排序，而非移动元素本身。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.5.4-list-容器访问元素的方法"><code>2.5.4 list 容器访问元素的方法</code></h2>
+        <blockquote>
+            <p>2.5.4</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>访问 list 元素的方式非常受限，这是为了换取高效插入/删除而付出的代价。</p>
+        <ul>
+            <li><strong>不支持</strong>： <code>operator[]</code> 和 <code>at()</code>。</li>
+            <li><strong>支持</strong>： <code>front()</code> 和 <code>back()</code> 用于访问首尾元素。</li>
+            <li><strong>通用方法</strong>：使用迭代器从头或尾开始<strong>顺序遍历</strong>。</li>
+        </ul>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;list&gt;
+
+int main() {
+    std::list&lt;int&gt; l = {10, 20, 30, 40, 50};
+
+    // 访问首尾元素
+    std::cout &lt;&lt; "首元素 (front): " &lt;&lt; l.front() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "尾元素 (back): " &lt;&lt; l.back() &lt;&lt; std::endl;
+
+    // 修改首元素
+    l.front() = 100;
+
+    // 访问中间元素（必须遍历）
+    auto it = l.begin();
+    std::advance(it, 2); // 使用 advance 函数将迭代器向前移动2步
+    std::cout &lt;&lt; "第3个元素是: " &lt;&lt; *it &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>首元素 (front): 10
+尾元素 (back): 50
+第3个元素是: 30
+</code></pre>
+        <hr>
+        <h2 id="2.5.5-list-容器添加和删除元素"><code>2.5.5 list 容器添加和删除元素</code></h2>
+        <blockquote>
+            <p>2.5.5</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>在任意位置高效地添加和删除元素是 list 的核心优势。所有这些操作都只需要修改几个指针，时间复杂度为 O(1) （不包括定位插入点的时间）。</p>
+        <h4>【图示（概念）】</h4>
+        <p>list 插入操作仅需修改指针，无需移动数据。</p>
+        <div class="graphviz">
+<pre><code>digraph List_Insert {
+    rankdir=TB;
+    node [shape=record, fontname="SimHei"];
+
+    subgraph cluster_before {
+        label = "1. 插入前";
+        node1_b [label="{... | a | <next> }"];
+        node2_b [label="{ <prev> | c | ... }"];
+        node1_b:next -> node2_b:prev [dir=both, label=" "];
+    }
+
+    new_node [label="{ <prev> | b | <next> }", style=filled, fillcolor=green];
+
+    subgraph cluster_after {
+        label = "2. 插入后 (仅修改4个指针)";
+        node1_a [label="{... | a | <next> }"];
+        node2_a [label="{ <prev> | c | ... }"];
+        new_node_a [label="{ <prev> | b | <next> }", style=filled, fillcolor=green];
+        node1_a:next -> new_node_a:prev [dir=both, color=red, style=dashed];
+        new_node_a:next -> node2_a:prev [dir=both, color=red, style=dashed];
+    }
+    node1_b -> new_node -> node2_a [style=invis];
+}
+</code></pre>
+        </div>
+        <hr>
+        <h2 id="2.5.6-list-容器的迭代器使用"><code>2.5.6 list 容器的迭代器使用</code></h2>
+        <blockquote>
+            <p>2.5.6</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>list 提供的是双向迭代器，支持 ++ 和 -- 操作，但不支持 +、- 等算术运算。</p>
+        <p>list 迭代器最大的优点是其稳定性。</p>
+        <ul>
+            <li><strong>插入稳定性</strong>：向 <code>list</code> 中插入任何数量的元素都<strong>不会</strong>导致任何现有的迭代器失效。</li>
+            <li><strong>删除稳定性</strong>：从 <code>list</code> 中删除一个元素，<strong>只有</strong>指向该被删除元素的迭代器会失效，所有指向其他元素的迭代器仍然保持有效。</li>
+        </ul>
+        <p>这种稳定性使得在遍历 <code>list</code> 的同时修改它变得非常安全和简单。</p>
+        <hr>
+        <h2 id="2.5.7-list-底层实现机制深度剖析"><code>2.5.7 list 底层实现机制深度剖析</code></h2>
+        <blockquote>
+            <p>2.5.7</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>list 的底层是一个双向链表。每个元素被包装在一个**节点（Node）**对象中。每个节点包含三个部分：</p>
+        <ol>
+            <li>存储的元素数据本身。</li>
+            <li>一个指向<strong>前一个</strong>节点的指针（ <code>prev</code>）。</li>
+            <li>一个指向<strong>后一个</strong>节点的指针（ <code>next</code>）。</li>
+        </ol>
+        <p>为了简化边界条件的处理（例如在空列表中插入、删除头尾节点），标准库的 <code>list</code> 实现通常会采用一个<strong>哨兵节点（sentinel node）</strong>。这个哨兵节点是一个特殊的、不存储任何用户数据的节点。 <code>list</code> 对象本身只包含一个指向这个哨兵节点的指针。这个哨兵节点的 <code>next</code> 指针指向链表的第一个真实元素， <code>prev</code> 指针指向最后一个真实元素，从而构成一个<strong>循环双向链表</strong>。 <code>end()</code> 迭代器就指向这个哨兵节点。这种设计巧妙地统一了所有插入和删除操作的逻辑。</p>
+        <hr>
+        <hr>
+        <h1 id="2.6-forward-list-容器">2.6 forward_list 容器</h1>
+        <blockquote></blockquote>
+        <h2 id="2.6.1-forward-list-单向链表容器"><code>2.6.1 forward_list：单向链表容器</code></h2>
+        <blockquote>
+            <p>2.6.1</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>std::forward_list 是 C++11 标准新增的序列式容器，它是一个单向链表。可以将其视为 std::list 的一个更节省空间、在某些操作上更快的版本。</p>
+        <p><code>forward_list</code> 的核心特性：</p>
+        <ol>
+            <li><strong>单向链接</strong>：每个元素（节点）只包含一个指向<strong>下一个</strong>元素的指针。这使得它比 <code>std::list</code>（双向链表）更节省内存，因为每个节点少了一个指针的开销。</li>
+            <li><strong>只支持前向遍历</strong>：由于只有指向下一个节点的指针， <code>forward_list</code> 的迭代器是<strong>前向迭代器</strong>，只能向前移动（ <code>++</code>），不支持向后移动（ <code>--</code>）。因此，它没有 <code>rbegin()</code>、 <code>rend()</code> 等反向迭代器函数。</li>
+            <li><strong>任意位置插入/删除高效</strong>：与 <code>list</code> 类似，在<strong>给定迭代器的下一个位置</strong>插入或删除元素是 O(1) 的高效操作。</li>
+            <li>无 <strong><code>size()</code> 成员函数</strong>：为了追求极致效率， <code>forward_list</code> 没有提供 <code>size()</code> 成员函数。因为对于链表来说，计算大小需要遍历整个链表，这是一个 O(n) 操作， <code>forward_list</code> 的设计哲学是只提供常数时间的操作。</li>
+        </ol>
+        <h4>【语法】</h4>
+        <p>要使用 forward_list 容器，必须包含 <forward_list> 头文件。</p>
+<pre><code class="language-cpp">#include &lt;forward_list&gt;
+using namespace std; // 可选
+</code></pre>
+        <h4>【图示（概念）】</h4>
+        <p>forward_list 的底层单向链表结构示意图。</p>
+        <div class="graphviz">
+<pre><code>digraph FList_Concept {
+    rankdir=LR;
+    node [shape=record, fontname="SimHei"];
+
+    start [label="头指针", shape=plaintext];
+    end [label="NULL", shape=plaintext];
+
+    node1 [label="{E1 | <next> }"];
+    node2 [label="{E2 | <next> }"];
+    node3 [label="{E3 | <next> }"];
+
+    start -> node1;
+    node1:next:c -> node2:w;
+    node2:next:c -> node3:w;
+    node3:next -> end [style=dashed];
+}
+</code></pre>
+        </div>
+        <div class="callout callout-warn">
+            <h4>【注意事项】</h4>
+            <ul>
+                <li><code>forward_list</code> 的所有插入和删除操作都是 “..._after” 形式，例如 <code>insert_after</code>、 <code>erase_after</code>，因为单向链表无法轻易地获取前一个节点的位置。</li>
+                <li>要在链表的最前端进行操作，需要使用一个特殊的迭代器，通过 <code>before_begin()</code> 函数获取。</li>
+            </ul>
+        </div>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 既然 <code>list</code> 功能更全，为什么还需要 <code>forward_list</code>？</li>
+                <li><strong>答：</strong> 当对内存占用有极致要求，并且你确信你的算法只需要对序列进行单向遍历时， <code>forward_list</code> 会是比 <code>list</code> 更优的选择。它牺牲了双向遍历的灵活性，换取了更小的内存开销和在某些情况下的微弱性能优势。但在大多数通用场景下， <code>std::list</code> 的灵活性通常更有价值。</li>
+            </ul>
+        </div>
+        <div class="callout callout-note">
+            <h4>【用途】</h4>
+            <ul>
+                <li>用于对性能和内存要求极为苛刻，且只需单向遍历的场景。</li>
+                <li>它是所有标准序列容器中内存开销最小的。</li>
+            </ul>
+        </div>
+        <hr>
+        <h2 id="2.6.2-forward-list-容器的创建与初始化"><code>2.6.2 forward_list 容器的创建与初始化</code></h2>
+        <blockquote>
+            <p>2.6.2</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>forward_list 的创建和初始化语法与 list、deque 等容器非常相似。</p>
+        <h4>【语法】</h4>
+<pre><code class="language-cpp">// 1. 创建空容器
+std::forward_list&lt;T&gt; fl;
+// 2. 创建包含 n 个元素的容器
+std::forward_list&lt;T&gt; fl(n, val);
+// 3. 使用初始化列表 (C++11)
+std::forward_list&lt;T&gt; fl {v1, v2, ...};
+// 4. 拷贝构造
+std::forward_list&lt;T&gt; fl2(fl1);
+// 5. 从其他迭代器范围创建
+std::forward_list&lt;T&gt; fl(first, last);
+</code></pre>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;forward_list&gt;
+#include &lt;string&gt;
+
+template&lt;typename T&gt;
+void print_flist(const std::string& name, const std::forward_list&lt;T&gt;& fl) {
+    std::cout &lt;&lt; name &lt;&lt; ": ";
+    for (const auto& element : fl) {
+        std::cout &lt;&lt; element &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; std::endl;
+}
+
+int main() {
+    // 使用初始化列表创建
+    std::forward_list&lt;int&gt; fl1 {1, 2, 3, 4};
+    print_flist("fl1", fl1);
+
+    // 拷贝构造
+    std::forward_list&lt;int&gt; fl2(fl1);
+    print_flist("fl2 (拷贝自 fl1)", fl2);
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>fl1: 1 2 3 4
+fl2 (拷贝自 fl1): 1 2 3 4
+</code></pre>
+        <hr>
+        <h2 id="2.6.3-forward-list-容器的成员函数"><code>2.6.3 forward_list 容器的成员函数</code></h2>
+        <blockquote>
+            <p>2.6.3</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>forward_list 的成员函数集是所有序列容器中最少的，这体现了其追求简约和高效的设计理念。</p>
+        <h4>【语法】</h4>
+        <p>下表是 forward_list 常用成员函数，并与 list 进行了对比。</p>
+        <table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>功能类别</strong></td>
+<td><strong>成员函数</strong></td>
+<td><strong>forward_list vs list 对比</strong></td>
+</tr>
+<tr>
+<td><strong>迭代器</strong></td>
+<td><code>before_begin()</code>, <code>begin()</code>, <code>end()</code></td>
+<td>提供了 <code>before_begin()</code>，但<strong>没有</strong> <code>rbegin()</code>, <code>rend()</code> 等反向迭代器函数。</td>
+</tr>
+<tr>
+<td><strong>容量</strong></td>
+<td><code>empty()</code>, <code>max_size()</code></td>
+<td>没有 <strong><code>size()</code> 函数</strong>。</td>
+</tr>
+<tr>
+<td><strong>元素访问</strong></td>
+<td><code>front()</code></td>
+<td>没有 <strong><code>back()</code> 函数</strong>。</td>
+</tr>
+<tr>
+<td><strong>修改器</strong></td>
+<td><code>push_front()</code>, <code>pop_front()</code></td>
+<td>没有 <code>push_back()</code>, <strong><code>pop_back()</code> 函数</strong>。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>insert_after()</code>, <code>emplace_after()</code></td>
+<td><code>_after</code> 版本，用于在指定迭代器<strong>之后</strong>插入。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>erase_after()</code></td>
+<td><code>_after</code> 版本，用于删除指定迭代器<strong>之后</strong>的元素。</td>
+</tr>
+<tr>
+<td></td>
+<td><code>clear()</code>, <code>swap()</code>, <code>assign()</code></td>
+<td>与 <code>list</code> 相同。</td>
+</tr>
+<tr>
+<td><strong>特殊操作</strong></td>
+<td><code>splice_after()</code>, <code>remove()</code>, <code>unique()</code>...</td>
+<td>与 <code>list</code> 类似，但都是 <code>_after</code> 版本或仅支持前向操作。</td>
+</tr>
+</tbody>
+</table>
+        <h2 id="2.6.4-forward-list-容器添加和删除元素"><code>2.6.4 forward_list 容器添加和删除元素</code></h2>
+        <blockquote>
+            <p>2.6.4</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>由于单向链表的结构限制，forward_list 的所有插入和删除操作都是在某个迭代器之后进行的。为了能在链表的最前端（即第一个元素之前）进行操作，forward_list 提供了一个独一无二的成员函数 before_begin()。</p>
+        <p><code>before_begin()</code> 返回一个特殊的迭代器，它指向第一个元素之前的“虚拟”位置。通过这个迭代器，我们可以调用 <code>insert_after()</code> 来实现在链表头部插入新元素。</p>
+        <h4>【代码】</h4>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;forward_list&gt;
+
+int main() {
+    std::forward_list&lt;int&gt; fl = {10, 20, 30};
+
+    // 获取指向第一个元素之前的迭代器
+    auto it_before = fl.before_begin();
+
+    // 在链表头部插入 99
+    fl.insert_after(it_before, 99); // fl: {99, 10, 20, 30}
+    std::cout &lt;&lt; "在头部插入后: ";
+    for (int n : fl) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; std::endl;
+
+    // 删除第一个元素 (即 before_begin 之后的元素)
+    fl.erase_after(it_before); // fl: {10, 20, 30}
+    std::cout &lt;&lt; "删除头部后: ";
+    for (int n : fl) std::cout &lt;&lt; n &lt;&lt; " ";
+    std::cout &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+        <h4>【结果】</h4>
+<pre><code>在头部插入后: 99 10 20 30
+删除头部后: 10 20 30
+</code></pre>
+        <hr>
+        <h2 id="2.6.5-forward-list-容器的迭代器使用"><code>2.6.5 forward_list 容器的迭代器使用</code></h2>
+        <blockquote>
+            <p>2.6.5</p>
+        </blockquote>
+        <h4>【原理/文字】</h4>
+        <p>forward_list 提供的是前向迭代器。这意味着它的迭代器仅支持以下操作：</p>
+        <ul>
+            <li><code>++it</code> 和 <code>it++</code>：移动到下一个元素。</li>
+            <li><code>*it</code>：解引用，访问元素值。</li>
+            <li><code>it1 == it2</code> 和 <code>it1 != it2</code>：比较两个迭代器是否相等。</li>
+        </ul>
+        <p>它不支持 --、+、- 等其他操作。</p>
+        <p>和 list 一样，forward_list 的迭代器也具有很高的稳定性，在容器被修改时，未被删除的元素的迭代器仍然保持有效。</p>
+        <div class="callout callout-question">
+            <h4>【常见问题】</h4>
+            <ul>
+                <li><strong>问：</strong> 如何获取 <code>forward_list</code> 中元素的数量？</li>
+                <li><strong>答：</strong> 必须使用 <code>&lt;iterator&gt;</code> 头文件中的 <code>std::distance()</code> 全局函数来计算。这是一个 O(n) 操作，因为它需要遍历整个链表。</li>
+            </ul>
+<pre><code class="language-cpp">#include &lt;iterator&gt;
+#include &lt;forward_list&gt;
+#include &lt;iostream&gt;
+
+int main(){
+      std::forward_list&lt;int&gt; fl = {1, 2, 3, 4, 5};
+      long size = std::distance(fl.begin(), fl.end());
+      std::cout &lt;&lt; "The size of the forward_list is: " &lt;&lt; size &lt;&lt; std::endl; // 输出 5
+}
+</code></pre>
+        </div>
+        <hr>
+        <h1 id="2.7-总结与学习建议">2.7 总结与学习建议</h1>
+        <blockquote></blockquote>
+        <h2 id="2.7.1-本章总结"><code>2.7.1 本章总结</code></h2>
+        <blockquote>
+            <p>2.7.1</p>
+        </blockquote>
+        <h4>【总结】</h4>
+        <p>本章我们详细学习了 C++ STL 中提供的五种标准序列式容器。每种容器都有其独特的底层实现和性能特点，适用于不同的应用场景。</p>
+        <p>下表是对这五种容器核心特性的一个快速回顾与对比：</p>
+        <table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>特性</strong></td>
+<td><strong>array</strong></td>
+<td><strong>vector</strong></td>
+<td><strong>deque</strong></td>
+<td><strong>list</strong></td>
+<td><strong>forward_list</strong></td>
+</tr>
+<tr>
+<td><strong>底层结构</strong></td>
+<td>静态数组</td>
+<td>动态数组</td>
+<td>分块数组</td>
+<td>双向链表</td>
+<td>单向链表</td>
+</tr>
+<tr>
+<td><strong>内存布局</strong></td>
+<td><strong>连续</strong></td>
+<td><strong>连续</strong></td>
+<td>分段连续</td>
+<td>非连续</td>
+<td>非连续</td>
+</tr>
+<tr>
+<td><strong>迭代器类型</strong></td>
+<td>随机访问</td>
+<td>随机访问</td>
+<td>随机访问</td>
+<td>双向</td>
+<td>前向</td>
+</tr>
+<tr>
+<td><strong>大小</strong></td>
+<td><strong>固定</strong></td>
+<td>动态</td>
+<td>动态</td>
+<td>动态</td>
+<td>动态</td>
+</tr>
+<tr>
+<td><strong>随机访问</strong></td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><strong>头部插入/删除</strong></td>
+<td>N/A</td>
+<td>O(n)</td>
+<td><strong>O(1)</strong> (摊销)</td>
+<td><strong>O(1)</strong></td>
+<td><strong>O(1)</strong></td>
+</tr>
+<tr>
+<td><strong>尾部插入/删除</strong></td>
+<td>N/A</td>
+<td><strong>O(1)</strong> (摊销)</td>
+<td><strong>O(1)</strong> (摊销)</td>
+<td><strong>O(1)</strong></td>
+<td>O(n) (无 <code>push_back</code>)</td>
+</tr>
+<tr>
+<td><strong>中部插入/删除</strong></td>
+<td>N/A</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td><strong>O(1)</strong></td>
+<td><strong>O(1)</strong> (需 <code>_after</code>)</td>
+</tr>
+<tr>
+<td><strong>迭代器稳定性</strong></td>
+<td>稳定</td>
+<td>差 (频繁失效)</td>
+<td>较差 (频繁失效)</td>
+<td><strong>极好</strong></td>
+<td><strong>极好</strong></td>
+</tr>
+<tr>
+<td><strong>主要优点</strong></td>
+<td>性能同C数组，接口友好</td>
+<td>通用性强，随机访问快</td>
+<td>双端操作快，支持随机访问</td>
+<td>任意位置插入/删除快</td>
+<td>内存开销最小</td>
+</tr>
+<tr>
+<td><strong>主要缺点</strong></td>
+<td>大小固定</td>
+<td>中间/头部插入删除慢</td>
+<td>内存非连续，比vector稍慢</td>
+<td>不支持随机访问</td>
+<td>功能最受限，单向遍历</td>
+</tr>
+</tbody>
+</table>
+        <h2 id="2.7.2-学习建议"><code>2.7.2 学习建议</code></h2>
+        <blockquote>
+            <p>2.7.2</p>
+        </blockquote>
+        <h4>【学习建议】</h4>
+        <p>面对如此多的容器，初学者可能会感到困惑。以下是一个基于通用实践的容器选择指南，可以帮助您在实际开发中做出明智的决策：</p>
+        <ol>
+            <li>默认选择 <code>**std::vector**</code>
+                <ul>
+                    <li>在绝大多数情况下，当你需要一个动态的元素序列时， <code>std::vector</code> 都应该是你的<strong>第一选择</strong>和<strong>默认选择</strong>。它的连续内存布局带来了优秀的缓存命中率和随机访问性能，尾部添加操作也非常高效。它的通用性和综合性能使其能够胜任大部分工作。</li>
+                </ul>
+            </li>
+            <li>如果需要固定大小，请用 <code>**std::array**</code>
+                <ul>
+                    <li>当你在编译时就能确定容器的大小，并且这个大小在运行时不会改变时， <code>std::array</code> 是替代 C 风格数组的最佳选择。它提供了与 C 数组相同的性能和内存布局（可以分配在栈上），同时又具备 STL 容器的便利性和安全性。</li>
+                </ul>
+            </li>
+            <li>如果需要在两端频繁操作，请用 <code>**std::deque**</code>
+                <ul>
+                    <li>如果你的核心需求是在序列的<strong>头部和尾部</strong>都进行频繁的插入和删除操作（例如实现一个队列），同时你还<strong>需要</strong>快速的随机访问能力，那么 <code>std::deque</code> 是为你量身定做的。</li>
+                </ul>
+            </li>
+            <li>如果需要在中间频繁操作，请用 <code>**std::list**</code>
+                <ul>
+                    <li>如果你的主要操作是在序列的<strong>中间位置</strong>频繁地插入或删除元素，并且不怎么需要随机访问元素，那么 <code>std::list</code> 是最合适的选择。它的链表结构保证了这些操作不会移动其他元素，效率极高。此外， <code>list</code> 优异的迭代器稳定性在某些复杂场景下（如边遍历边修改）非常有用。</li>
+                </ul>
+            </li>
+            <li>如果内存是首要考虑，请用 <code>**std::forward_list**</code>
+                <ul>
+                    <li><code>forward_list</code> 是一个“极简版”的链表。只在你对内存占用有极其严格的要求，并且确信你的算法只需要单向遍历时，才应该考虑它。在大多数情况下， <code>std::list</code> 的灵活性是更值得的选择。</li>
+                </ul>
+            </li>
+        </ol>
+        <p>核心思想：</p>
+        <p>选择容器的本质，是在内存布局（连续 vs. 非连续）和操作性能（随机访问 vs. 插入/删除）之间做出权衡。深刻理解每种容器的底层数据结构，是做出正确选择的关键。</p>
+        <p>希望本章的讲解能帮助你牢固掌握 C++ STL 序列式容器。</p>
+    </main>
+    
+    <!-- Prism.js script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <!-- Viz.js for Graphviz rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/viz.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/full.render.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- 1. Generate Sidebar Navigation ---
+        const navContainer = document.getElementById('sidebar-nav');
+        const content = document.getElementById('content');
+        const headings = content.querySelectorAll('h1, h2');
+        let navHtml = '';
+        headings.forEach(heading => {
+            const level = heading.tagName.toLowerCase(); // h1, h2
+            const text = heading.textContent.replace(/`/g, '');
+            const id = heading.id;
+            navHtml += `<li class="nav-${level}"><a href="#${id}">${text}</a></li>`;
+        });
+        navContainer.innerHTML = navHtml;
+
+        // --- 2. Add Copy Buttons to Code Blocks ---
+        document.querySelectorAll('pre').forEach(pre => {
+            const code = pre.querySelector('code');
+            if (code && !pre.closest('.graphviz')) {
+                const button = document.createElement('button');
+                button.className = 'copy-btn';
+                button.textContent = '复制';
+                button.addEventListener('click', () => {
+                    navigator.clipboard.writeText(code.innerText).then(() => {
+                        button.textContent = '已复制!';
+                        setTimeout(() => {
+                            button.textContent = '复制';
+                        }, 2000);
+                    });
+                });
+                pre.appendChild(button);
+            }
+        });
+
+        // --- 3. Render Graphviz Diagrams ---
+        const viz = new Viz();
+        document.querySelectorAll('.graphviz pre').forEach(pre => {
+            const graphContainer = pre.parentElement;
+            const dotCode = pre.innerText;
+            viz.renderSVGElement(dotCode)
+                .then(element => {
+                    graphContainer.innerHTML = ''; // Clear the pre tag
+                    graphContainer.appendChild(element);
+                })
+                .catch(error => {
+                    graphContainer.innerHTML = `<p style="color:red;">Graphviz渲染失败</p><pre>${dotCode}</pre>`;
+                    console.error('Graphviz Error:', error);
+                });
+        });
+        
+        // --- 4. Active Link Highlighting on Scroll ---
+        const navLinks = document.querySelectorAll('#sidebar-nav a');
+        const headingElements = Array.from(headings);
+
+        const onScroll = () => {
+            let current = '';
+            
+            headingElements.forEach(header => {
+                const headerTop = header.offsetTop;
+                if (window.scrollY >= headerTop - 100) { // Offset for better accuracy
+                    current = header.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', onScroll);
+        onScroll(); // Initial check
+
+        // --- 5. Auto-apply C++ highlighting to code blocks --- 
+        // Ensure this runs after Prism.js has loaded and after other DOM manipulations
+        Prism.highlightAll(); // Initial highlighting if classes are already there
+
+        // Find all <pre><code> blocks that don't have a language class 
+        // and are not inside a .graphviz container, then apply C++ highlighting.
+        document.querySelectorAll('pre > code').forEach(codeBlock => {
+            const parentPre = codeBlock.parentElement;
+            // Check if it's not a graphviz diagram's code
+            if (parentPre && !parentPre.closest('.graphviz')) {
+                // Check if a language class is already present
+                let hasLanguageClass = false;
+                for (const cls of codeBlock.classList) {
+                    if (cls.startsWith('language-')) {
+                        hasLanguageClass = true;
+                        break;
+                    }
+                }
+                if (!hasLanguageClass) {
+                    codeBlock.classList.add('language-cpp');
+                    Prism.highlightElement(codeBlock); // Re-highlight this specific element
+                }
+            }
+        });
+    });
+    </script>
+</body>
+</html>

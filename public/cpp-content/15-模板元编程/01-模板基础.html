@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模板基础</title>
+</head>
+<body>
+    <h1>模板基础</h1>
+    <h2>什么是模板</h2>
+    <p>C++模板是一种泛型编程的机制，允许编写与类型无关的代码。</p>
+    
+    <h2>函数模板</h2>
+    <pre><code>template&lt;typename T&gt;
+T max(T a, T b) {
+    return (a &gt; b) ? a : b;
+}</code></pre>
+    
+    <h2>类模板</h2>
+    <pre><code>template&lt;typename T&gt;
+class Stack {
+private:
+    std::vector&lt;T&gt; elements;
+public:
+    void push(const T&amp; elem);
+    T pop();
+    bool empty() const;
+};</code></pre>
+    
+    <p>这是一个示例HTML文件，您可以替换为实际的学习内容。</p>
+</body>
+</html>
