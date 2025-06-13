@@ -25,6 +25,5 @@ export default defineNuxtConfig({
     baseURL: '/personalwebsite/', // 替换为你的仓库名
     buildAssetsDir: 'assets'
   },
-  ssr: false, // 禁用服务端渲染
-  target: 'static' // 设置为静态生成
+  ssr: false // 禁用服务端渲染，启用静态生成
 })
