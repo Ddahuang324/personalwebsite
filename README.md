@@ -1,4 +1,6 @@
-# Nuxt Minimal Starter
+# DahuangWeb
+
+个人网站项目，基于 Nuxt.js 构建的现代化个人作品集网站。
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
