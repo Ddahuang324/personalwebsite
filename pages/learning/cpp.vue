@@ -113,33 +113,8 @@ const initChapters = async () => {
 // 动态加载章节文件
 const loadChapterFiles = async () => {
   for (const chapter of chapters.value) {
-    try {
-      // 尝试获取文件夹内容
-      const response = await fetch(`/cpp-content/${chapter.folder}/`)
-      if (response.ok) {
-        const html = await response.text()
-        // 解析HTML中的文件链接
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(html, 'text/html')
-        const links = doc.querySelectorAll('a[href$=".html"]')
-        
-        chapter.files = Array.from(links).map(link => {
-          const fileName = link.getAttribute('href')
-          const displayName = fileName.replace('.html', '').replace(/^\d+-/, '')
-          return {
-            name: fileName,
-            displayName: displayName,
-            path: `/cpp-content/${chapter.folder}/${fileName}`
-          }
-        })
-      } else {
-        // 如果无法获取文件夹内容，使用已知的文件
-        await loadKnownFiles(chapter)
-      }
-    } catch (error) {
-      console.log(`无法加载章节 ${chapter.title} 的文件列表，使用已知文件`)
-      await loadKnownFiles(chapter)
-    }
+    // 在静态托管环境下，无法直接列出文件夹内容，因此直接使用已知文件列表
+    await loadKnownFiles(chapter)
   }
 }
 
