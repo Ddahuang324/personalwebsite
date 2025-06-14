@@ -38,6 +38,12 @@ const hideModal = () => {
 };
 </script>
 
+<script setup>
+import { useRuntimeConfig } from 'nuxt/app';
+const config = useRuntimeConfig();
+const baseURL = config.public?.baseURL || '/';
+</script>
+
 <style>
 /* General Styles */
 body {
@@ -56,7 +62,7 @@ body.modal-open {
 /* Font Face Declarations */
 @font-face {
   font-family: 'Anton';
-  src: url('~/assets/fonts/Anton-Regular.ttf') format('truetype');
+  src: v-bind('`${baseURL}assets/fonts/Anton-Regular.ttf`') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -64,7 +70,7 @@ body.modal-open {
 
 @font-face {
   font-family: 'Lora';
-  src: url('~/assets/fonts/Lora-Regular.ttf') format('truetype');
+  src: v-bind('`${baseURL}assets/fonts/Lora-Regular.ttf`') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -72,7 +78,7 @@ body.modal-open {
 
 @font-face {
   font-family: 'Lora';
-  src: url('~/assets/fonts/Lora-Bold.ttf') format('truetype');
+  src: v-bind('`${baseURL}assets/fonts/Lora-Bold.ttf`') format('truetype');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -80,7 +86,7 @@ body.modal-open {
 
 @font-face {
   font-family: 'Lora';
-  src: url('~/assets/fonts/Lora-Italic.ttf') format('truetype');
+  src: v-bind('`${baseURL}assets/fonts/Lora-Italic.ttf`') format('truetype');
   font-weight: normal;
   font-style: italic;
   font-display: swap;
@@ -88,7 +94,7 @@ body.modal-open {
 
 @font-face {
   font-family: 'Lora';
-  src: url('~/assets/fonts/Lora-BoldItalic.ttf') format('truetype');
+  src: v-bind('`${baseURL}assets/fonts/Lora-BoldItalic.ttf`') format('truetype');
   font-weight: bold;
   font-style: italic;
   font-display: swap;
