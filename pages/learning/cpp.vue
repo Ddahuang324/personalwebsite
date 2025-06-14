@@ -129,7 +129,7 @@ const loadKnownFiles = async (chapter) => {
   const files = knownFiles[chapter.id] || []
   chapter.files = files.map(file => ({
     ...file,
-    path: `/DahuangWeb/cpp-content/${chapter.folder}/${file.name}`
+    path: `/cpp-content/${chapter.folder}/${file.name}`
   }))
   
   // 如果没有已知文件，显示占位符
