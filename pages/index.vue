@@ -56,35 +56,35 @@ body.modal-open {
 /* Font Face Declarations */
 @font-face {
   font-family: 'Anton';
-  src: url('/fonts/Anton-Regular.ttf') format('truetype');
+  src: url('/assets/fonts/Anton-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Lora';
-  src: url('/fonts/Lora-Regular.ttf') format('truetype');
+  src: url('/assets/fonts/Lora-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Lora';
-  src: url('/fonts/Lora-Bold.ttf') format('truetype');
+  src: url('/assets/fonts/Lora-Bold.ttf') format('truetype');
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Lora';
-  src: url('/fonts/Lora-Italic.ttf') format('truetype');
+  src: url('/assets/fonts/Lora-Italic.ttf') format('truetype');
   font-weight: normal;
   font-style: italic;
 }
 
 @font-face {
   font-family: 'Lora';
-  src: url('/fonts/Lora-BoldItalic.ttf') format('truetype');
+  src: url('/assets/fonts/Lora-BoldItalic.ttf') format('truetype');
   font-weight: bold;
   font-style: italic;
 }

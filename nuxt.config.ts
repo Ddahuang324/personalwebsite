@@ -5,6 +5,10 @@ export default defineNuxtConfig({
   modules: [
     '@vueuse/motion/nuxt'
   ],
+  // 添加 GSAP 插件配置
+  plugins: [
+    { src: '~/plugins/gsap.client.js', mode: 'client' }
+  ],
   motion: {
     directives: {
       'motion': {},
