@@ -9,6 +9,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRuntimeConfig } from 'nuxt/app';
 import HeroSection from '~/components/HeroSection.vue';
 import MenuComponent from '~/components/MenuComponent.vue';
 import StagesSection from '~/components/StagesSection.vue';
@@ -17,6 +18,10 @@ import ModalComponent from '~/components/ModalComponent.vue';
 const isMenuOpen = ref(false);
 const isModalVisible = ref(false);
 const activeModalNode = ref(null);
+
+// 获取运行时配置，用于字体路径
+const config = useRuntimeConfig();
+const baseURL = config.public?.baseURL || '/';
 
 const handleScrollToSection = (sectionId) => {
   const section = document.getElementById(sectionId);
@@ -36,12 +41,6 @@ const hideModal = () => {
   activeModalNode.value = null;
   document.body.classList.remove('modal-open');
 };
-</script>
-
-<script setup>
-import { useRuntimeConfig } from 'nuxt/app';
-const config = useRuntimeConfig();
-const baseURL = config.public?.baseURL || '/';
 </script>
 
 <style>
