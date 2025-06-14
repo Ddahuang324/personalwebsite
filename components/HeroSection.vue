@@ -1,7 +1,7 @@
 <template>
   <section class="hero-section">
     <video autoplay loop muted playsinline class="background-video">
-      <source :src="videoSrc" type="video/mp4">
+      <source src="/assets/img/video.mp4" type="video/mp4">
     </video>
     <header class="top-slogan">
       <p>March 2002</p>
@@ -14,53 +14,32 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue';
-import { useRuntimeConfig } from 'nuxt/app';
-
-// 客户端导入GSAP
-let gsap;
-if (process.client) {
-  gsap = require('gsap');
-}
-
-// 计算视频路径
-const config = useRuntimeConfig();
-const baseURL = config.public?.baseURL || '/';
-const videoSrc = computed(() => `${baseURL}assets/img/video.mp4`);
+import { onMounted } from 'vue';
+import { gsap } from 'gsap';
 
 onMounted(() => {
-  // 确保只在客户端执行
-  if (!process.client || !gsap) {
-    console.warn("GSAP not available. Animation disabled.");
-    return;
-  }
+  const tl = gsap.timeline({ delay: 0.8, defaults: { ease: 'power3.out', duration: 1.5 }});
+  tl.from('.hero-section .background-video', { autoAlpha: 0, scale: 1.05, duration: 2}, 0)
+    .from('.top-slogan', { y: -50, autoAlpha: 0, duration: 1.2 }, 0.8)
+    .from('.hero-content h1', { y: 70, autoAlpha: 0, duration: 1.5 }, 1.2)
+    .from('.hero-content .subtitle', { y: 50, autoAlpha: 0, duration: 1.2 }, 1.6);
 
-  try {
-    const tl = gsap.timeline({ delay: 0.8, defaults: { ease: 'power3.out', duration: 1.5 }});
-    tl.from('.hero-section .background-video', { autoAlpha: 0, scale: 1.05, duration: 2}, 0)
-      .from('.top-slogan', { y: -50, autoAlpha: 0, duration: 1.2 }, 0.8)
-      .from('.hero-content h1', { y: 70, autoAlpha: 0, duration: 1.5 }, 1.2)
-      .from('.hero-content .subtitle', { y: 50, autoAlpha: 0, duration: 1.2 }, 1.6);
-
-    const heroSection = document.querySelector('.hero-section');
-    if (heroSection) {
-      heroSection.addEventListener('mousemove', (e) => {
-        const { clientX, clientY, currentTarget } = e;
-        const { clientWidth, clientHeight } = currentTarget;
-        const xPercent = (clientX / clientWidth) - 0.5;
-        const yPercent = (clientY / clientHeight) - 0.5;
-        gsap.to('.background-video', { 
-          x: xPercent * -20,
-          y: yPercent * -20, 
-          duration: 0.8,
-          ease: 'power1.out'
-        });
-        gsap.to('.hero-content h1', { x: xPercent * -10, y: yPercent * -5, duration: 0.8, ease: 'power1.out'});
-        gsap.to('.hero-content .subtitle', { x: xPercent * -15, y: yPercent * -8, duration: 0.8, ease: 'power1.out'});
+  const heroSection = document.querySelector('.hero-section');
+  if (heroSection) {
+    heroSection.addEventListener('mousemove', (e) => {
+      const { clientX, clientY, currentTarget } = e;
+      const { clientWidth, clientHeight } = currentTarget;
+      const xPercent = (clientX / clientWidth) - 0.5;
+      const yPercent = (clientY / clientHeight) - 0.5;
+      gsap.to('.background-video', { 
+        x: xPercent * -20,
+        y: yPercent * -20, 
+        duration: 0.8,
+        ease: 'power1.out'
       });
-    }
-  } catch (error) {
-    console.error("Error initializing GSAP animations:", error);
+      gsap.to('.hero-content h1', { x: xPercent * -10, y: yPercent * -5, duration: 0.8, ease: 'power1.out'});
+      gsap.to('.hero-content .subtitle', { x: xPercent * -15, y: yPercent * -8, duration: 0.8, ease: 'power1.out'});
+    });
   }
 });
 </script>
@@ -108,8 +87,8 @@ onMounted(() => {
     rgba(0,0,0,0.2) 50%, 
     transparent 100%);
   z-index: 1;
-  filter: blur(8px);
-  -webkit-filter: blur(8px);
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
 }
 
 .hero-section .background-video {
@@ -139,7 +118,9 @@ onMounted(() => {
   font-size: 0.9rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  opacity: 0.8;
+  opacity: 0.85;
+  filter: blur(1px);
+  -webkit-filter: blur(1px);
 }
 
 .hero-content h1 {
@@ -151,13 +132,24 @@ onMounted(() => {
   font-weight: normal;
   color: #fff;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+  z-index: 10;
+  position: relative;
+  filter: blur(1px);
+  -webkit-filter: blur(1px);
+  opacity: 0.6;
 }
 
 .hero-content .subtitle {
   font-size: clamp(1.2rem, 3vw, 1.8rem);
-  font-style: italic;
-  opacity: 0.9;
-  color: #e0e0e0;
+  margin-bottom: 30px;
+  opacity: 0.85;
+  color: #ffffff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  font-weight: 500;
+  z-index: 10;
+  position: relative;
+  filter: blur(1px);
+  -webkit-filter: blur(1px);
 }
 
 @media (max-width: 768px) {

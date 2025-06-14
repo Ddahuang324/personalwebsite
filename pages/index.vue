@@ -9,7 +9,6 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRuntimeConfig } from 'nuxt/app';
 import HeroSection from '~/components/HeroSection.vue';
 import MenuComponent from '~/components/MenuComponent.vue';
 import StagesSection from '~/components/StagesSection.vue';
@@ -18,10 +17,6 @@ import ModalComponent from '~/components/ModalComponent.vue';
 const isMenuOpen = ref(false);
 const isModalVisible = ref(false);
 const activeModalNode = ref(null);
-
-// 获取运行时配置，用于字体路径
-const config = useRuntimeConfig();
-const baseURL = config.public?.baseURL || '/';
 
 const handleScrollToSection = (sectionId) => {
   const section = document.getElementById(sectionId);
@@ -61,41 +56,36 @@ body.modal-open {
 /* Font Face Declarations */
 @font-face {
   font-family: 'Anton';
-  src: v-bind('`${baseURL}assets/fonts/Anton-Regular.ttf`') format('truetype');
+  src: url('/assets/fonts/Anton-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
   font-family: 'Lora';
-  src: v-bind('`${baseURL}assets/fonts/Lora-Regular.ttf`') format('truetype');
+  src: url('/assets/fonts/Lora-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
   font-family: 'Lora';
-  src: v-bind('`${baseURL}assets/fonts/Lora-Bold.ttf`') format('truetype');
+  src: url('/assets/fonts/Lora-Bold.ttf') format('truetype');
   font-weight: bold;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
   font-family: 'Lora';
-  src: v-bind('`${baseURL}assets/fonts/Lora-Italic.ttf`') format('truetype');
+  src: url('/assets/fonts/Lora-Italic.ttf') format('truetype');
   font-weight: normal;
   font-style: italic;
-  font-display: swap;
 }
 
 @font-face {
   font-family: 'Lora';
-  src: v-bind('`${baseURL}assets/fonts/Lora-BoldItalic.ttf`') format('truetype');
+  src: url('/assets/fonts/Lora-BoldItalic.ttf') format('truetype');
   font-weight: bold;
   font-style: italic;
-  font-display: swap;
 }
 </style>

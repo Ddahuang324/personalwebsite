@@ -40,14 +40,10 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router'; // Or Nuxt 3 might auto-import this
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// 客户端导入GSAP
-let gsap, ScrollTrigger;
-if (process.client) {
-  gsap = require('gsap');
-  ScrollTrigger = require('gsap/ScrollTrigger').ScrollTrigger;
-  gsap.registerPlugin(ScrollTrigger);
-}
+gsap.registerPlugin(ScrollTrigger);
 
 const router = useRouter();
 
@@ -121,85 +117,75 @@ const handleKeydown = (e) => {
 
 // 组件挂载时初始化动画和事件监听
 onMounted(async () => {
-  // 确保只在客户端执行
-  if (!process.client || !gsap || !ScrollTrigger) {
-    console.warn("GSAP or ScrollTrigger not available. Animation disabled.");
-    return;
-  }
-
   await nextTick(); 
 
-  try {
-    // 为header元素添加渐入动画
-    const headerH1 = stagesSectionRef.value?.querySelector('.header h1');
-    // const headerP = stagesSectionRef.value?.querySelector('.header p'); // headerP is display:none
+  // 为header元素添加渐入动画
+  const headerH1 = stagesSectionRef.value?.querySelector('.header h1');
+  // const headerP = stagesSectionRef.value?.querySelector('.header p'); // headerP is display:none
+  
+  if (headerH1) { // Check only for headerH1
+    // 初始状态：透明且向上偏移
+    gsap.set(headerH1, { autoAlpha: 0, y: -30 }); // Animate only headerH1
     
-    if (headerH1) { // Check only for headerH1
-      // 初始状态：透明且向上偏移
-      gsap.set(headerH1, { autoAlpha: 0, y: -30 }); // Animate only headerH1
-      
-      // 渐入动画
-      gsap.to(headerH1, {
-        autoAlpha: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-        delay: 0.3
-      });
-      // No animation for headerP as it's hidden
-    }
-
-    const validTitleEls = stageTitleRefs.value.filter(el => el);
-
-    if (!stagesSectionRef.value || validTitleEls.length === 0) {
-      console.warn("GSAP ScrollTrigger: Missing refs for StagesSection animation or no titles rendered.");
-      return;
-    }
-    
-    if (validTitleEls.length !== stages.length) {
-      console.warn(`GSAP ScrollTrigger: Mismatch between stages data (${stages.length}) and rendered title refs (${validTitleEls.length}). Animating available refs.`);
-    }
-
-    gsap.set(validTitleEls, { autoAlpha: 0, xPercent: -50, yPercent: -50, y: 50 });
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: stagesSectionRef.value,
-        pin: true, 
-        scrub: 1.2, 
-        start: "top top",
-        end: () => `+=${validTitleEls.length * 50}%`, // Adjusted for slower transition between titles
-        // markers: process.env.NODE_ENV === 'development', // Uncomment for debugging, ensure process.env is available or use true
-      }
+    // 渐入动画
+    gsap.to(headerH1, {
+      autoAlpha: 1,
+      y: 0,
+      duration: 1,
+      ease: "power2.out",
+      delay: 0.3
     });
-
-    const animationDuration = 0.8;
-    const holdDuration = 1.6;
-
-    validTitleEls.forEach((titleEl, index) => {
-      const startTime = index * (animationDuration + holdDuration);
-
-      tl.to(titleEl, {
-        autoAlpha: 1,
-        y: 0, // Animates from y:50 to y:0 (relative to its yPercent:-50 position)
-        duration: animationDuration,
-        ease: "power2.out"
-      }, startTime)
-      .call(() => {
-        currentStageIndex.value = index;
-        if (index === 0) showScrollHint.value = false;
-      }, null, startTime);
-
-      tl.to(titleEl, {
-        autoAlpha: 0,
-        y: -50, // Animates from y:0 to y:-50
-        duration: animationDuration,
-        ease: "power2.in"
-      }, startTime + holdDuration);
-    });
-  } catch (error) {
-    console.error("Error initializing GSAP animations:", error);
+    // No animation for headerP as it's hidden
   }
+
+  const validTitleEls = stageTitleRefs.value.filter(el => el);
+
+  if (!stagesSectionRef.value || validTitleEls.length === 0) {
+    console.warn("GSAP ScrollTrigger: Missing refs for StagesSection animation or no titles rendered.");
+    return;
+  }
+  
+  if (validTitleEls.length !== stages.length) {
+    console.warn(`GSAP ScrollTrigger: Mismatch between stages data (${stages.length}) and rendered title refs (${validTitleEls.length}). Animating available refs.`);
+  }
+
+  gsap.set(validTitleEls, { autoAlpha: 0, xPercent: -50, yPercent: -50, y: 50 });
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: stagesSectionRef.value,
+      pin: true, 
+      scrub: 1.2, 
+      start: "top top",
+      end: () => `+=${validTitleEls.length * 50}%`, // Adjusted for slower transition between titles
+      // markers: process.env.NODE_ENV === 'development', // Uncomment for debugging, ensure process.env is available or use true
+    }
+  });
+
+  const animationDuration = 0.8;
+  const holdDuration = 1.6;
+
+  validTitleEls.forEach((titleEl, index) => {
+    const startTime = index * (animationDuration + holdDuration);
+
+    tl.to(titleEl, {
+      autoAlpha: 1,
+      y: 0, // Animates from y:50 to y:0 (relative to its yPercent:-50 position)
+      duration: animationDuration,
+      ease: "power2.out"
+    }, startTime)
+    .call(() => {
+      currentStageIndex.value = index;
+      if (index === 0) showScrollHint.value = false;
+    }, null, startTime);
+
+    tl.to(titleEl, {
+      autoAlpha: 0,
+      y: -50, // Animates from y:0 to y:-50
+      duration: animationDuration,
+      ease: "power2.in"
+    }, startTime + holdDuration);
+  });
   
   // 添加键盘事件监听
   window.addEventListener('keydown', handleKeydown);

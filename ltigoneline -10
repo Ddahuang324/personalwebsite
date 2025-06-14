@@ -1,0 +1,25 @@
+[33m07c9988[m Initial commit with GitHub Pages configuration
+[33m7bc25f7[m Fix nuxt config: remove deprecated target property
+[33m6b75dfc[m Configure GitHub Pages deployment
+[33m0fdb80e[m Fix: Grant write permissions to GITHUB_TOKEN for deployment
+[33m571def0[m Configure GitHub Pages deployment
+[33mdbc8afa[m Initial commit
+[33m4de819b[m Fix: Resolve 404 issue for demo.html on GitHub Pages
+[33m7c50f95[m 修复GitHub Pages部署时HTML文件路径问题，使用相对路径替代绝对路径
+[33m70bd92b[m 修复GitHub Pages上HTML文件路径问题，添加baseURL前缀
+[33mcde2caa[m 修复Vue组件语法错误，补充缺失的闭合括
+[33m6260dcd[m Initial commit: Upload personal website to DahuangWeb repository
+[33me32d1c0[m Merge remote repository and resolve README conflict
+[33m0e5fb78[m  修复nuxt.config.ts中的TypeScript错误，移除过时的target属性
+[33ma6bdcb0[m Create nextjs.yml
+[33m7c94eb5[m Create nuxtjs.yml
+[33m4909c87[m Delete .github/workflows/nextjs.yml
+[33mb206628[m Delete .github/workflows/nuxtjs.yml
+[33me3751dc[m Move assets to public folder and update font paths
+[33m7f9d296[m Complete merge and move assets to public folder
+[33m721288f[m Update project configuration for GitHub Pages deployment
+[33mf691b02[m Create nuxtjs.yml
+[33m0e37f20[m 修复GitHub Pages部署问题：GSAP客户端加载和资源路径
+[33m21375d4[m 合并远程更改并解决冲突
+[33meea8bb0[m 修复字体路径问题，使用动态baseURL配置
+[33m52e8a1d[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m 修复字体路径问题，使用动态baseURL配置

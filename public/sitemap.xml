@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://你的用户名.github.io/DahuangWeb/</loc>
+    <loc>http://localhost:3000/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://你的用户名.github.io/DahuangWeb/developer</loc>
+    <loc>http://localhost:3000/developer</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://你的用户名.github.io/DahuangWeb/artist</loc>
+    <loc>http://localhost:3000/artist</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://你的用户名.github.io/DahuangWeb/musician</loc>
+    <loc>http://localhost:3000/musician</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://你的用户名.github.io/DahuangWeb/lifestyle</loc>
+    <loc>http://localhost:3000/lifestyle</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://你的用户名.github.io/DahuangWeb/study</loc>
+    <loc>http://localhost:3000/study</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://你的用户名.github.io/DahuangWeb/learning/cpp</loc>
+    <loc>http://localhost:3000/learning/cpp</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

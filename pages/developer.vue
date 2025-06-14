@@ -265,7 +265,7 @@ const projects = reactive([
     icon: '🔄',
     status: 'active',
     statusText: '活跃',
-    technologies: ['Git', 'GitHub', 'Various'],
+    technologies: ['Git', 'Various'],
     stars: 'N/A',
     commits: '200+',
     lastUpdate: '持续中',

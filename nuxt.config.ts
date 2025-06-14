@@ -15,30 +15,13 @@ export default defineNuxtConfig({
       'motion-slide-down': {},
     },
   },
-  // GitHub Pages 部署配置
+  ssr: false,
   nitro: {
     prerender: {
-      routes: ['/', '/developer', '/artist', '/musician', '/lifestyle', '/study', '/learning/cpp']
+      routes: ['/sitemap.xml', '/robots.txt']
     }
   },
   app: {
-    baseURL: '/personalwebsite/', // 替换为你的仓库名
-    buildAssetsDir: 'assets'
-  },
-  ssr: false, // 禁用服务端渲染以支持静态生成
-  
-  // 公开运行时配置
-  runtimeConfig: {
-    public: {
-      baseURL: process.env.BASE_URL || '/personalwebsite/'
-    }
-  },
-  
-  // 自动导入组件
-  components: true,
-  
-  // 添加客户端插件
-  plugins: [
-    { src: '~/plugins/gsap.client.js', mode: 'client' }
-  ]
+    baseURL: process.env.NODE_ENV === 'production' ? '/personalwebsite/' : '/'
+  }
 })
