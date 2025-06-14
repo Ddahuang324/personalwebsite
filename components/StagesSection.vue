@@ -73,7 +73,7 @@ const stages = reactive([
       ['https://via.placeholder.com/150/FFC107/000000?Text=Code3', 'https://via.placeholder.com/150/DC3545/FFFFFF?Text=Code4']
     ]
   },
-  { id: 3, title: '一位生活家', route: '/lifestyle', content: '在平凡的日子里发现不平凡的美好，用心感受生活的每一个细节。', marqueeImages: [
+  { id: 3, title: '一位"生活家"', route: '/lifestyle', content: '在平凡的日子里发现不平凡的美好，用心感受生活的每一个细节。', marqueeImages: [
       ['https://via.placeholder.com/150/FF6B6B/FFFFFF?Text=Life1', 'https://via.placeholder.com/150/4ECDC4/FFFFFF?Text=Life2', 'https://via.placeholder.com/150/45B7D1/FFFFFF?Text=Life3'],
       ['https://via.placeholder.com/150/96CEB4/FFFFFF?Text=Life4', 'https://via.placeholder.com/150/FFEAA7/000000?Text=Life5', 'https://via.placeholder.com/150/DDA0DD/000000?Text=Life6']
     ]
@@ -198,6 +198,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@font-face {
+  font-family: '王强手写体';
+  src: url('/assets/fonts/王强手写体.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .stages-section {
   height: 100vh; 
   display: flex;
@@ -206,8 +213,30 @@ onUnmounted(() => {
   justify-content: center;
   position: relative; 
   overflow: hidden;
-  background: #0a0a0a; /* Dark background like the image */
-  /* Consider adding a subtle gradient or a very dark, blurred background image later */
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/assets/img/图像2025-6-15_07.16.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.stages-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(to bottom, 
+    rgba(0, 0, 0, 0.8) 0%, 
+    rgba(0, 0, 0, 0.6) 30%, 
+    rgba(0, 0, 0, 0.4) 60%, 
+    rgba(0, 0, 0, 0.2) 80%, 
+    transparent 100%);
+  z-index: 1;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
 }
 
 /* Removing ::after and ::before for now to simplify, can re-add if needed for top gradient */
@@ -220,7 +249,7 @@ onUnmounted(() => {
   top: 50px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 15;
   width: 100%;
 }
 
@@ -309,21 +338,27 @@ onUnmounted(() => {
 }
 
 .stage-title {
-  font-family: 'Anton', sans-serif; /* Kept Anton as it matches bold sans-serif */
-  font-size: clamp(3rem, 8vw, 6rem); /* Larger, bolder */
+  font-family: '王强手写体', 'Times New Roman', 'Georgia', serif; /* 王强手写体 */
+  font-size: clamp(4rem, 10vw, 8rem); /* 增加字体大小 */
   color: #ffffff; /* White text */
-  font-weight: bold; 
-  text-transform: uppercase;
+  font-weight: bold; /* 增加字体粗度 */
+  font-style: normal; /* 正常样式 */
+  text-transform: none; /* 移除大写转换 */
   cursor: pointer;
   padding: 10px 20px;
   text-align: center;
   position: absolute; 
-  top: 45%; /* Adjusted for better centering with subtitle */
+  top: 40%; /* 减少与顶部的距离 */
   left: 50%;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Subtle shadow for depth */
+  width: 60vw; /* 适中的宽度允许两行显示 */
+  max-width: 800px; /* 减少最大宽度 */
+  white-space: normal; /* 允许文本换行 */
+  line-height: 1.4; /* 提高标签高度 */
+  text-shadow: none; /* 移除阴影 */
   transition: all 0.3s ease;
-  z-index: 5;
+  z-index: 10;
   will-change: transform, opacity;
+  letter-spacing: 1px; /* 适当的字母间距 */
   /* GSAP sets initial transform: translate(-50%, -50%) translateY(50px) via xPercent, yPercent, y */
   /* And opacity: 0 via autoAlpha */
 }
@@ -334,17 +369,20 @@ onUnmounted(() => {
 }
 
 .stage-subtitle {
-  font-family: 'Lora', serif;
-  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  font-family: 'Brush Script MT', 'Lucida Handwriting', 'Dancing Script', 'Pacifico', cursive; /* 艺术字体 */
+  font-size: clamp(0.8rem, 2vw, 1.2rem); /* 缩小字体大小 */
+  font-style: italic; /* 斜体 */
   color: #e0e0e0; /* Light grey */
   text-align: center;
   position: absolute;
   top: 80%; /* Position below main title, moved down */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 5;
+  z-index: 10;
   opacity: 0; /* Will be animated in by GSAP if desired, or set to 1 */
   animation: fadeInSubtitle 1s 1s ease-out forwards; /* Simple fade in for now */
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6); /* 添加阴影效果 */
+  letter-spacing: 0.5px; /* 增加字母间距 */
 }
 
 @keyframes fadeInSubtitle {
@@ -355,12 +393,15 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .stage-title {
-    font-size: clamp(1.8rem, 8vw, 3rem);
+    font-size: clamp(2.5rem, 10vw, 4rem);
     top: 40%;
+    width: 90vw; /* 移动端增加宽度 */
+    max-width: 600px; /* 移动端最大宽度 */
   }
   
   .stages-section {
     padding: 0 20px;
+    background-attachment: scroll; /* 移动端使用scroll避免性能问题 */
   }
   
   .progress-indicator {
@@ -377,7 +418,7 @@ onUnmounted(() => {
   bottom: 40px; /* Positioned lower */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 15;
   opacity: 0.7;
 }
 
