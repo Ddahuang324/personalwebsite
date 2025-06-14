@@ -5,10 +5,6 @@ export default defineNuxtConfig({
   modules: [
     '@vueuse/motion/nuxt'
   ],
-  // 添加 GSAP 插件配置
-  plugins: [
-    { src: '~/plugins/gsap.client.js', mode: 'client' }
-  ],
   motion: {
     directives: {
       'motion': {},
@@ -22,7 +18,7 @@ export default defineNuxtConfig({
   // GitHub Pages 部署配置
   nitro: {
     prerender: {
-      routes: ['/sitemap.xml', '/', '/developer', '/artist', '/musician', '/lifestyle', '/study', '/learning/cpp']
+      routes: ['/', '/developer', '/artist', '/musician', '/lifestyle', '/study', '/learning/cpp']
     }
   },
   app: {

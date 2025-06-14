@@ -100,8 +100,10 @@ onMounted(() => {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 100%;
-  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: cover;
   transform: translate(-50%, -50%);
   z-index: -2;
