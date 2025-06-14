@@ -105,12 +105,16 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue';
 
+// 获取运行时配置
+const { $config } = useNuxtApp();
+const baseURL = $config.app.baseURL || '/';
+
 // 作品数据
 const artworks = reactive([
   { 
     id: 1, 
     title: '抽象之美', 
-    image: '/paintings/未命名作品.jpg',
+    image: `${baseURL}paintings/未命名作品.jpg`,
     description: '这幅作品探索了色彩与形式的纯粹关系，通过抽象的表现手法展现内心世界的复杂情感。每一笔都承载着艺术家对美的独特理解。',
     medium: '布面油画',
     year: '2023'
@@ -118,7 +122,7 @@ const artworks = reactive([
   { 
     id: 2, 
     title: '色彩交响', 
-    image: '/paintings/未命名作品 1.jpg',
+    image: `${baseURL}paintings/未命名作品 1.jpg`,
     description: '如同音乐中的和谐旋律，这幅画用色彩编织出一首视觉交响曲。暖色与冷色的对比创造出动人的节奏感。',
     medium: '丙烯画',
     year: '2023'
@@ -126,7 +130,7 @@ const artworks = reactive([
   { 
     id: 3, 
     title: '光影诗篇', 
-    image: '/paintings/未命名作品 2.jpg',
+    image: `${baseURL}paintings/未命名作品 2.jpg`,
     description: '光与影的舞蹈在画布上展开，捕捉瞬间的美好。这是对时间流逝的诗意表达，每一道光线都诉说着不同的故事。',
     medium: '水彩画',
     year: '2022'
@@ -134,7 +138,7 @@ const artworks = reactive([
   { 
     id: 4, 
     title: '梦境漫游', 
-    image: '/paintings/未命名作品 3.jpg',
+    image: `${baseURL}paintings/未命名作品 3.jpg`,
     description: '在梦与现实的边界游走，这幅作品邀请观者进入一个超现实的世界。模糊的边界让想象力自由飞翔。',
     medium: '混合媒介',
     year: '2023'
@@ -142,7 +146,7 @@ const artworks = reactive([
   { 
     id: 5, 
     title: '时间碎片', 
-    image: '/paintings/未命名作品 4.jpg',
+    image: `${baseURL}paintings/未命名作品 4.jpg`,
     description: '时间如碎片般散落，每一片都承载着记忆的重量。这幅作品试图重新组合这些片段，寻找失落的完整。',
     medium: '拼贴画',
     year: '2022'
@@ -150,7 +154,7 @@ const artworks = reactive([
   { 
     id: 6, 
     title: '情感流淌', 
-    image: '/paintings/未命名作品 5.jpg',
+    image: `${baseURL}paintings/未命名作品 5.jpg`,
     description: '情感如河流般在画布上流淌，没有固定的形状，却有着强烈的生命力。这是对人类情感复杂性的深度探索。',
     medium: '布面油画',
     year: '2023'
@@ -158,7 +162,7 @@ const artworks = reactive([
   { 
     id: 7, 
     title: '自然律动', 
-    image: '/paintings/未命名作品 6.jpg',
+    image: `${baseURL}paintings/未命名作品 6.jpg`,
     description: '大自然的韵律在这里得到完美体现，从微观到宏观，从静止到运动，展现了生命的无穷活力。',
     medium: '版画',
     year: '2022'
@@ -166,7 +170,7 @@ const artworks = reactive([
   { 
     id: 8, 
     title: '心灵对话', 
-    image: '/paintings/未命名作品 7.jpg',
+    image: `${baseURL}paintings/未命名作品 7.jpg`,
     description: '这是一场与内心的深度对话，通过艺术的语言表达最真实的自我。每一个细节都是心灵深处的回响。',
     medium: '素描',
     year: '2023'
