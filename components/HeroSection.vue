@@ -1,7 +1,7 @@
 <template>
   <section class="hero-section">
     <video autoplay loop muted playsinline class="background-video">
-      <source src="/assets/img/video.mp4" type="video/mp4">
+      <source :src="videoSrc" type="video/mp4">
     </video>
     <header class="top-slogan">
       <p>March 2002</p>
@@ -14,32 +14,53 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { gsap } from 'gsap';
+import { onMounted, computed } from 'vue';
+import { useRuntimeConfig } from 'nuxt/app';
+
+// 客户端导入GSAP
+let gsap;
+if (process.client) {
+  gsap = require('gsap');
+}
+
+// 计算视频路径
+const config = useRuntimeConfig();
+const baseURL = config.public?.baseURL || '/';
+const videoSrc = computed(() => `${baseURL}assets/img/video.mp4`);
 
 onMounted(() => {
-  const tl = gsap.timeline({ delay: 0.8, defaults: { ease: 'power3.out', duration: 1.5 }});
-  tl.from('.hero-section .background-video', { autoAlpha: 0, scale: 1.05, duration: 2}, 0)
-    .from('.top-slogan', { y: -50, autoAlpha: 0, duration: 1.2 }, 0.8)
-    .from('.hero-content h1', { y: 70, autoAlpha: 0, duration: 1.5 }, 1.2)
-    .from('.hero-content .subtitle', { y: 50, autoAlpha: 0, duration: 1.2 }, 1.6);
+  // 确保只在客户端执行
+  if (!process.client || !gsap) {
+    console.warn("GSAP not available. Animation disabled.");
+    return;
+  }
 
-  const heroSection = document.querySelector('.hero-section');
-  if (heroSection) {
-    heroSection.addEventListener('mousemove', (e) => {
-      const { clientX, clientY, currentTarget } = e;
-      const { clientWidth, clientHeight } = currentTarget;
-      const xPercent = (clientX / clientWidth) - 0.5;
-      const yPercent = (clientY / clientHeight) - 0.5;
-      gsap.to('.background-video', { 
-        x: xPercent * -20,
-        y: yPercent * -20, 
-        duration: 0.8,
-        ease: 'power1.out'
+  try {
+    const tl = gsap.timeline({ delay: 0.8, defaults: { ease: 'power3.out', duration: 1.5 }});
+    tl.from('.hero-section .background-video', { autoAlpha: 0, scale: 1.05, duration: 2}, 0)
+      .from('.top-slogan', { y: -50, autoAlpha: 0, duration: 1.2 }, 0.8)
+      .from('.hero-content h1', { y: 70, autoAlpha: 0, duration: 1.5 }, 1.2)
+      .from('.hero-content .subtitle', { y: 50, autoAlpha: 0, duration: 1.2 }, 1.6);
+
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+      heroSection.addEventListener('mousemove', (e) => {
+        const { clientX, clientY, currentTarget } = e;
+        const { clientWidth, clientHeight } = currentTarget;
+        const xPercent = (clientX / clientWidth) - 0.5;
+        const yPercent = (clientY / clientHeight) - 0.5;
+        gsap.to('.background-video', { 
+          x: xPercent * -20,
+          y: yPercent * -20, 
+          duration: 0.8,
+          ease: 'power1.out'
+        });
+        gsap.to('.hero-content h1', { x: xPercent * -10, y: yPercent * -5, duration: 0.8, ease: 'power1.out'});
+        gsap.to('.hero-content .subtitle', { x: xPercent * -15, y: yPercent * -8, duration: 0.8, ease: 'power1.out'});
       });
-      gsap.to('.hero-content h1', { x: xPercent * -10, y: yPercent * -5, duration: 0.8, ease: 'power1.out'});
-      gsap.to('.hero-content .subtitle', { x: xPercent * -15, y: yPercent * -8, duration: 0.8, ease: 'power1.out'});
-    });
+    }
+  } catch (error) {
+    console.error("Error initializing GSAP animations:", error);
   }
 });
 </script>
