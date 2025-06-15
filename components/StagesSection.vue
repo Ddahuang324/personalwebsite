@@ -60,6 +60,7 @@ import { useRouter } from 'vue-router'; // Or Nuxt 3 might auto-import this
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as d3 from 'd3';
+import { useTimeAllocationData } from '~/composables/useTimeAllocationData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,33 +82,8 @@ const showTimeChart = ref(false);
 const lastChartCreateTime = ref(0);
 const CHART_COOLDOWN = 5000; // 5秒冷却时间
 
-// 时间分配图表数据
-const chartData = [
-  { age: 0, study: 60, game: 0, social: 40, coding: 0, music: 0 },
-  { age: 2, study: 65, game: 5, social: 30, coding: 0, music: 0 },
-  { age: 4, study: 70, game: 10, social: 20, coding: 0, music: 0 },
-  { age: 6, study: 75, game: 15, social: 10, coding: 0, music: 0 },
-  { age: 8, study: 70, game: 20, social: 10, coding: 0, music: 0 },
-  { age: 10, study: 60, game: 30, social: 10, coding: 0, music: 0 },
-  { age: 12, study: 55, game: 25, social: 15, coding: 5, music: 0 },
-  { age: 14, study: 50, game: 20, social: 20, coding: 10, music: 0 },
-  { age: 16, study: 45, game: 15, social: 25, coding: 15, music: 0 },
-  { age: 18, study: 40, game: 10, social: 30, coding: 20, music: 0 },
-  { age: 20, study: 35, game: 8, social: 32, coding: 25, music: 0 },
-  { age: 22, study: 30, game: 5, social: 35, coding: 28, music: 2 },
-  { age: 24, study: 25, game: 5, social: 38, coding: 30, music: 2 },
-  { age: 25, study: 20, game: 5, social: 40, coding: 30, music: 5 }
-];
-
-const seriesNames = ['social', 'coding', 'game', 'study', 'music'];
-const colors = ['#a7f3d0', '#10b981', '#60a5fa', '#6366f1', '#f472b6'];
-const legendItems = [
-  { name: 'Study', color: '#6366f1' },
-  { name: 'Game', color: '#60a5fa' },
-  { name: 'Social or Family', color: '#a7f3d0' },
-  { name: 'Coding', color: '#10b981' },
-  { name: 'Music', color: '#f472b6' }
-];
+// 使用共享的时间分配数据
+const { timeAllocationData: chartData, seriesNames, colors, legendItems } = useTimeAllocationData();
 
 // 定义阶段数据
 const stages = reactive([
@@ -167,14 +143,18 @@ const createTimeChart = () => {
   // 清除之前的图表
   d3.select(chartContainer.value).selectAll('*').remove();
   
-  const width = 600;
-  const height = 300;
+  const containerWidth = chartContainer.value.clientWidth;
+  const aspectRatio = 16 / 9; // 或者您希望的任何宽高比
+  const width = containerWidth;
+  const height = containerWidth / aspectRatio; // 根据宽度和宽高比计算高度
   const margin = { top: 20, right: 30, bottom: 40, left: 50 };
   
   const svg = d3.select(chartContainer.value)
     .append('svg')
     .attr('width', width)
-    .attr('height', height);
+    .attr('height', height)
+    .attr('viewBox', `0 0 ${width} ${height}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet');
   
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -419,7 +399,7 @@ onMounted(async () => {
         nextTick(() => {
           if (timeChartRef.value) {
             gsap.set(timeChartRef.value, { autoAlpha: 0, y: 50 });
-            createTimeChart();
+            createTimeChart(); // Initial chart creation
             gsap.to(timeChartRef.value, {
               autoAlpha: 1,
               y: 0,
@@ -437,11 +417,13 @@ onMounted(async () => {
   
   // 添加键盘事件监听
   window.addEventListener('keydown', handleKeydown);
+  window.addEventListener('resize', createTimeChart); // Re-create chart on resize
 });
 
 // 组件卸载时移除事件监听
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
+  window.removeEventListener('resize', createTimeChart); // Remove resize listener
 });
 </script>
 

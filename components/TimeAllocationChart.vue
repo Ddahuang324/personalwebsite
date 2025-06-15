@@ -16,36 +16,17 @@
 
 <script>
 import * as d3 from 'd3'
+import { useTimeAllocationData } from '~/composables/useTimeAllocationData'
 
 export default {
   name: 'TimeAllocationChart',
   data() {
+    const { timeAllocationData, seriesNames, colors, legendItems } = useTimeAllocationData()
     return {
-      data: [
-        { age: 0, study: 60, game: 0, social: 40, coding: 0, music: 0 },
-        { age: 2, study: 65, game: 5, social: 30, coding: 0, music: 0 },
-        { age: 4, study: 70, game: 10, social: 20, coding: 0, music: 0 },
-        { age: 6, study: 75, game: 15, social: 10, coding: 0, music: 0 },
-        { age: 8, study: 70, game: 20, social: 10, coding: 0, music: 0 },
-        { age: 10, study: 60, game: 30, social: 10, coding: 0, music: 0 },
-        { age: 12, study: 55, game: 25, social: 15, coding: 5, music: 0 },
-        { age: 14, study: 50, game: 20, social: 20, coding: 10, music: 0 },
-        { age: 16, study: 45, game: 15, social: 25, coding: 15, music: 0 },
-        { age: 18, study: 40, game: 10, social: 30, coding: 20, music: 0 },
-        { age: 20, study: 35, game: 8, social: 32, coding: 25, music: 0 },
-        { age: 22, study: 30, game: 5, social: 35, coding: 28, music: 2 },
-        { age: 24, study: 25, game: 5, social: 38, coding: 30, music: 2 },
-        { age: 25, study: 20, game: 5, social: 40, coding: 30, music: 5 }
-      ],
-      seriesNames: ['social', 'coding', 'game', 'study', 'music'],
-      colors: ['#a7f3d0', '#10b981', '#60a5fa', '#6366f1', '#f472b6'],
-      legendItems: [
-        { name: 'Study', color: '#6366f1' },
-        { name: 'Game', color: '#60a5fa' },
-        { name: 'Social or Family', color: '#a7f3d0' },
-        { name: 'Coding', color: '#10b981' },
-        { name: 'Music', color: '#f472b6' }
-      ]
+      data: timeAllocationData,
+      seriesNames,
+      colors,
+      legendItems
     }
   },
   mounted() {
