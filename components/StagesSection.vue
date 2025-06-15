@@ -1,8 +1,13 @@
 <template>
   <section class="stages-section" ref="stagesSectionRef">
+    <!-- 添加光效元素 -->
+    <div class="light-effect"></div>
+    <div class="light-effect light-effect-secondary"></div>
+    <div class="starry-background"></div>
+    <div class="wave-effect"></div>
     <!-- 标题区域 -->
     <div class="header">
-      <h1>STAGES</h1>
+      <h1></h1>
     </div>
     
     <!-- 进度指示器 -->
@@ -28,7 +33,7 @@
         @click="onStageClick(stage)">
       {{ stage.title }}
     </h3>
-    <p class="stage-subtitle">Hi, I'm Da Huang</p>
+    <!-- 移除了stage-subtitle -->
     
     <!-- 时间分配图表区域 -->
     <div class="time-chart-container" ref="timeChartRef" v-show="showTimeChart">
@@ -143,18 +148,42 @@ const createTimeChart = () => {
   // 清除之前的图表
   d3.select(chartContainer.value).selectAll('*').remove();
   
-  const containerWidth = chartContainer.value.clientWidth;
-  const aspectRatio = 16 / 9; // 或者您希望的任何宽高比
+  // 获取容器宽度，确保在所有设备上都能正确计算
+  let containerWidth = chartContainer.value.clientWidth || chartContainer.value.offsetWidth;
+  
+  // 确保在移动设备上有合理的最小宽度
+  containerWidth = Math.max(containerWidth, 280);
+  
+  // 根据设备类型调整宽高比
+  let aspectRatio = 16 / 9; // 默认宽高比
+  
+  // 在小屏幕设备上使用更紧凑的宽高比
+  if (window.innerWidth <= 480) {
+    aspectRatio = 4 / 3;
+  } else if (window.innerWidth <= 768) {
+    aspectRatio = 5 / 3;
+  }
+  
   const width = containerWidth;
   const height = containerWidth / aspectRatio; // 根据宽度和宽高比计算高度
-  const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+  
+  // 根据屏幕大小调整边距
+  const margin = { 
+    top: Math.max(10, Math.min(20, width * 0.05)), 
+    right: Math.max(15, Math.min(30, width * 0.05)), 
+    bottom: Math.max(20, Math.min(40, width * 0.07)), 
+    left: Math.max(25, Math.min(50, width * 0.08))
+  };
   
   const svg = d3.select(chartContainer.value)
     .append('svg')
-    .attr('width', width)
-    .attr('height', height)
+    .attr('width', '100%')
+    .attr('height', '100%')
     .attr('viewBox', `0 0 ${width} ${height}`)
-    .attr('preserveAspectRatio', 'xMidYMid meet');
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .style('display', 'block')
+    .style('margin', '0 auto')
+    .style('max-width', '100%');
   
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -222,13 +251,15 @@ const createTimeChart = () => {
         });
     });
   
-  // 添加坐标轴
+  // 添加坐标轴，根据屏幕大小调整刻度数量
+  const ticksCount = window.innerWidth <= 480 ? 4 : (window.innerWidth <= 768 ? 5 : 6);
+  
   const xAxis = d3.axisBottom(x)
-    .ticks(6)
-    .tickFormat(d => d + ' years');
+    .ticks(ticksCount)
+    .tickFormat(d => d + (window.innerWidth <= 480 ? 'y' : ' years')); // 在小屏幕上简化标签
   
   const yAxis = d3.axisLeft(y)
-    .ticks(5)
+    .ticks(window.innerWidth <= 480 ? 4 : 5)
     .tickFormat(d => d + '%');
   
   g.append('g')
@@ -236,38 +267,44 @@ const createTimeChart = () => {
     .attr('transform', `translate(0, ${innerHeight})`)
     .call(xAxis)
     .selectAll('text')
-    .style('font-size', '10px')
-    .style('fill', '#fff');
+    .style('font-size', window.innerWidth <= 480 ? '8px' : '10px') // 小屏幕上使用更小的字体
+    .style('fill', '#fff')
+    .attr('dy', '0.7em'); // 调整文本垂直位置
   
   g.append('g')
     .attr('class', 'y-axis')
     .call(yAxis)
     .selectAll('text')
-    .style('font-size', '10px')
-    .style('fill', '#fff');
+    .style('font-size', window.innerWidth <= 480 ? '8px' : '10px')
+    .style('fill', '#fff')
+    .attr('dx', '-0.5em'); // 调整文本水平位置
   
   // 设置轴线颜色
   g.selectAll('.domain, .tick line')
     .style('stroke', '#fff')
     .style('opacity', 0.6);
   
-  // 添加轴标签
-  g.append('text')
-    .attr('transform', 'rotate(-90)')
-    .attr('y', 0 - margin.left)
-    .attr('x', 0 - (innerHeight / 2))
-    .attr('dy', '1em')
-    .style('text-anchor', 'middle')
-    .style('font-size', '12px')
-    .style('fill', '#fff')
-    .text('Time Percentage (%)');
+  // 添加轴标签，根据屏幕大小调整
+  // Y轴标签
+  if (window.innerWidth > 480) { // 在较大屏幕上显示完整标签
+    g.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', 0 - margin.left)
+      .attr('x', 0 - (innerHeight / 2))
+      .attr('dy', '1em')
+      .style('text-anchor', 'middle')
+      .style('font-size', window.innerWidth <= 768 ? '10px' : '12px')
+      .style('fill', '#fff')
+      .text('Time Percentage (%)');
+  }
   
+  // X轴标签
   g.append('text')
-    .attr('transform', `translate(${innerWidth / 2}, ${innerHeight + margin.bottom - 5})`)
+    .attr('transform', `translate(${innerWidth / 2}, ${innerHeight + (window.innerWidth <= 480 ? margin.bottom - 2 : margin.bottom - 5)})`)
     .style('text-anchor', 'middle')
-    .style('font-size', '12px')
+    .style('font-size', window.innerWidth <= 480 ? '9px' : (window.innerWidth <= 768 ? '10px' : '12px'))
     .style('fill', '#fff')
-    .text('Age');
+    .text(window.innerWidth <= 480 ? 'Age (years)' : 'Age');
 };
 
 // 滚动到指定阶段
@@ -285,6 +322,16 @@ const handleKeydown = (e) => {
     currentStageIndex.value--;
     scrollToStage(currentStageIndex.value);
   }
+};
+
+// 处理设备方向变化或窗口大小变化的函数
+const handleOrientationChange = () => {
+  // 添加一个小延迟，确保DOM已经更新
+  setTimeout(() => {
+    if (showTimeChart.value && chartContainer.value) {
+      createTimeChart();
+    }
+  }, 300);
 };
 
 // 组件挂载时初始化动画和事件监听
@@ -420,10 +467,25 @@ onMounted(async () => {
   window.addEventListener('resize', createTimeChart); // Re-create chart on resize
 });
 
+// 添加设备方向变化监听
+window.addEventListener('orientationchange', handleOrientationChange);
+// 添加更精确的resize事件处理
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    if (showTimeChart.value && chartContainer.value) {
+      createTimeChart();
+    }
+  }, 250); // 添加防抖，避免频繁重绘
+});
+
 // 组件卸载时移除事件监听
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
   window.removeEventListener('resize', createTimeChart); // Remove resize listener
+  window.removeEventListener('orientationchange', handleOrientationChange);
+  clearTimeout(resizeTimeout);
 });
 </script>
 
@@ -448,6 +510,22 @@ onUnmounted(() => {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  animation: backgroundAnimation 30s ease-in-out infinite alternate;
+}
+
+@keyframes backgroundAnimation {
+  0% {
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0);
+  }
+  50% {
+    background-position: calc(50% - 10px) calc(50% - 10px);
+    background-color: rgba(20, 20, 40, 0.2);
+  }
+  100% {
+    background-position: calc(50% + 10px) calc(50% + 10px);
+    background-color: rgba(40, 20, 20, 0.2);
+  }
 }
 
 .stages-section::before {
@@ -467,30 +545,224 @@ onUnmounted(() => {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   pointer-events: none;
+  animation: gradientPulse 8s ease-in-out infinite;
 }
 
-/* Removing ::after and ::before for now to simplify, can re-add if needed for top gradient */
-/* .stages-section::after { ... } */
-/* .stages-section::before { ... } */
+@keyframes gradientPulse {
+  0% {
+    opacity: 0.9;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  50% {
+    opacity: 0.7;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  100% {
+    opacity: 0.9;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+/* 添加背景粒子效果 */
+.stages-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, transparent 8%), 
+                    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 5%);
+  background-size: 180px 180px, 160px 160px;
+  background-position: 0 0;
+  opacity: 0.3;
+  z-index: 0;
+  pointer-events: none;
+  animation: particlesDrift 60s linear infinite;
+}
+
+@keyframes particlesDrift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+/* 这部分已经在上面定义过，这里删除重复定义 */
+
+/* 添加光效元素 */
+.light-effect {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  animation: lightMove 20s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+
+.light-effect-secondary {
+  top: -30%;
+  left: -30%;
+  width: 160%;
+  height: 160%;
+  background: radial-gradient(ellipse at center, rgba(70, 120, 255, 0.02) 0%, transparent 60%);
+  animation: lightMoveSecondary 25s ease-in-out infinite alternate;
+  opacity: 0.4;
+}
+
+@keyframes lightMove {
+  0% {
+    transform: translate(-5%, -5%) rotate(0deg) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(5%, 5%) rotate(180deg) scale(1.05);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-5%, 5%) rotate(360deg) scale(1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes lightMoveSecondary {
+  0% {
+    transform: translate(5%, 5%) rotate(0deg) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(-5%, -5%) rotate(-180deg) scale(1.1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(5%, -5%) rotate(-360deg) scale(1);
+    opacity: 0.4;
+  }
+}
+
+/* 添加星光背景效果 */
+.starry-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(1px 1px at 25% 15%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 40%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 75% 25%, rgba(255, 255, 255, 0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 20% 60%, rgba(255, 255, 255, 0.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 70%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 85%, rgba(255, 255, 255, 0.4) 0%, transparent 100%),
+    radial-gradient(2px 2px at 85% 75%, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
+  background-repeat: repeat;
+  background-size: 250px 250px;
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+  animation: twinkle 8s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.1;
+    background-position: 0px 0px;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.15;
+    background-position: 20px 20px;
+  }
+}
+
+/* 添加波浪效果 */
+.wave-effect {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 10, 30, 0.1) 100%);
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.wave-effect::before,
+.wave-effect::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 60px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+  background-size: 1440px 120px;
+  background-repeat: repeat-x;
+  animation: waveMove 20s linear infinite;
+}
+
+.wave-effect::after {
+  bottom: -30px;
+  height: 90px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.03" d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,106.7C672,117,768,171,864,197.3C960,224,1056,224,1152,202.7C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+  animation-duration: 30s;
+  animation-direction: reverse;
+}
+
+@keyframes waveMove {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 1440px;
+  }
+}
 
 .stages-section .header {
   text-align: center;
   position: absolute;
-  top: 50px;
+  top: 20%; /* 调整位置更靠近中央 */
   left: 50%;
   transform: translateX(-50%);
   z-index: 15;
   width: 100%;
+  animation: fadeInHeader 1.5s ease-out forwards; /* 添加淡入动画 */
+}
+
+@keyframes fadeInHeader {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .stages-section .header h1 {
-  font-family: 'Lora', serif; /* Changed to Lora for a softer look, or keep sans-serif if preferred */
-  font-size: clamp(0.9rem, 2vw, 1.1rem); /* Smaller like 'MARCH 2002' */
-  text-transform: uppercase;
+  font-family: 'Brush Script MT', 'Lucida Handwriting', 'Dancing Script', 'Pacifico', cursive; /* 艺术字体 */
+  font-size: clamp(1.2rem, 3vw, 2rem); /* 增加字体大小 */
+  font-style: italic; /* 斜体 */
+  text-transform: none; /* 移除大写转换 */
   margin-bottom: 10px;
-  color: #c0c0c0; /* Light grey */
-  /* removed background-clip and text-shadow for cleaner look */
-  letter-spacing: 1px;
+  color: #ffffff; /* 白色文字 */
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6); /* 添加阴影效果 */
+  letter-spacing: 0.5px; /* 字母间距 */
+  opacity: 0.9; /* 透明度 */
 }
 
 .stages-section .header p {
@@ -686,14 +958,19 @@ onUnmounted(() => {
 /* 时间分配图表样式 */
 .time-chart-container {
   position: absolute;
-  top: 10%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
   z-index: 5;
   opacity: 0;
   width: 90%;
   max-width: 800px;
   text-align: center;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
 
 .chart-header {
@@ -719,15 +996,20 @@ onUnmounted(() => {
 
 .chart-wrapper {
   padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
 
 #stages-chart-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin: 0 auto 20px;
   width: 100%;
+  max-width: 100%;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .chart-legend {
@@ -758,21 +1040,27 @@ onUnmounted(() => {
   .time-chart-container {
     width: 95%;
     padding: 0 10px;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
   }
   
   .chart-wrapper {
     padding: 15px;
     width: 100%;
     box-sizing: border-box;
+    margin: 0 auto;
   }
   
   #stages-chart-container {
     width: 100%;
     margin: 0 auto;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
   }
   
@@ -806,9 +1094,12 @@ onUnmounted(() => {
   
   .time-chart-container {
     width: 98%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
     position: absolute;
   }
   
@@ -816,12 +1107,15 @@ onUnmounted(() => {
     padding: 12px;
     width: 100%;
     box-sizing: border-box;
+    margin: 0 auto;
   }
   
   #stages-chart-container {
     width: 100%;
     margin: 0 auto;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
   }
   
@@ -844,11 +1138,40 @@ onUnmounted(() => {
   .time-chart-container {
     -webkit-transform: translate3d(-50%, -50%, 0);
     transform: translate3d(-50%, -50%, 0);
+    top: 50%;
+    left: 50%;
   }
   
   #stages-chart-container {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
+    margin: 0 auto;
+  }
+}
+
+/* Android Chrome 特定修复 */
+@supports (-webkit-appearance:none) and (not (-webkit-touch-callout:none)) {
+  .time-chart-container {
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+  }
+  
+  #stages-chart-container {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+}
+
+/* Windows Edge/Chrome 特定修复 */
+@supports (-ms-ime-align:auto) {
+  .time-chart-container {
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+  }
+  
+  #stages-chart-container {
+    transform: translateZ(0);
+    -ms-transform: translateZ(0);
   }
 }
 </style>
