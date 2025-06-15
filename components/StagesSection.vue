@@ -174,10 +174,7 @@ const createTimeChart = () => {
   const svg = d3.select(chartContainer.value)
     .append('svg')
     .attr('width', width)
-    .attr('height', height)
-    .style('background', 'rgba(255, 255, 255, 0.1)')
-    .style('border-radius', '8px')
-    .style('backdrop-filter', 'blur(10px)');
+    .attr('height', height);
   
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -739,12 +736,7 @@ onUnmounted(() => {
 }
 
 .chart-wrapper {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
   padding: 20px;
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 #stages-chart-container {
