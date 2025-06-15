@@ -724,7 +724,10 @@ onUnmounted(() => {
 #stages-chart-container {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-bottom: 20px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .chart-legend {
@@ -755,10 +758,22 @@ onUnmounted(() => {
   .time-chart-container {
     width: 95%;
     padding: 0 10px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
   }
   
   .chart-wrapper {
     padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  #stages-chart-container {
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
   }
   
   .chart-header h2 {
@@ -791,10 +806,23 @@ onUnmounted(() => {
   
   .time-chart-container {
     width: 98%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    position: absolute;
   }
   
   .chart-wrapper {
     padding: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  #stages-chart-container {
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
   }
   
   .chart-legend {
@@ -808,6 +836,19 @@ onUnmounted(() => {
   .legend-color {
     width: 14px;
     height: 14px;
+  }
+}
+
+/* iOS Safari 特定修复 */
+@supports (-webkit-touch-callout: none) {
+  .time-chart-container {
+    -webkit-transform: translate3d(-50%, -50%, 0);
+    transform: translate3d(-50%, -50%, 0);
+  }
+  
+  #stages-chart-container {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 }
 </style>
