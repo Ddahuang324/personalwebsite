@@ -30,6 +30,23 @@
     </h3>
     <p class="stage-subtitle">Hi, I'm Da Huang</p>
     
+    <!-- 时间分配图表区域 -->
+    <div class="time-chart-container" ref="timeChartRef" v-show="showTimeChart">
+      <div class="chart-header">
+        <h2>Time</h2>
+        <p>This is how I spend my time. My biggest hobby is learning, as I am curious about almost everything.</p>
+      </div>
+      <div class="chart-wrapper">
+        <div id="stages-chart-container" ref="chartContainer"></div>
+        <div class="chart-legend">
+          <div v-for="(item, index) in legendItems" :key="item.name" class="legend-item">
+            <div class="legend-color" :style="{ backgroundColor: item.color }"></div>
+            <span>{{ item.name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <!-- 点击提示 -->
     <div class="click-hint">
       <span>点击标题 查看仔细内容</span>
@@ -42,6 +59,7 @@ import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router'; // Or Nuxt 3 might auto-import this
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import * as d3 from 'd3';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -51,10 +69,45 @@ const router = useRouter();
 const stagesSectionRef = ref(null);
 // 引用每个阶段标题的DOM元素数组
 const stageTitleRefs = ref([]);
+// 引用时间图表容器
+const timeChartRef = ref(null);
+const chartContainer = ref(null);
 // 当前激活的阶段索引
 const currentStageIndex = ref(0);
 // 是否显示滚动提示
 const showScrollHint = ref(true);
+// 是否显示时间分配图表
+const showTimeChart = ref(false);
+const lastChartCreateTime = ref(0);
+const CHART_COOLDOWN = 5000; // 5秒冷却时间
+
+// 时间分配图表数据
+const chartData = [
+  { age: 0, study: 60, game: 0, social: 40, coding: 0, music: 0 },
+  { age: 2, study: 65, game: 5, social: 30, coding: 0, music: 0 },
+  { age: 4, study: 70, game: 10, social: 20, coding: 0, music: 0 },
+  { age: 6, study: 75, game: 15, social: 10, coding: 0, music: 0 },
+  { age: 8, study: 70, game: 20, social: 10, coding: 0, music: 0 },
+  { age: 10, study: 60, game: 30, social: 10, coding: 0, music: 0 },
+  { age: 12, study: 55, game: 25, social: 15, coding: 5, music: 0 },
+  { age: 14, study: 50, game: 20, social: 20, coding: 10, music: 0 },
+  { age: 16, study: 45, game: 15, social: 25, coding: 15, music: 0 },
+  { age: 18, study: 40, game: 10, social: 30, coding: 20, music: 0 },
+  { age: 20, study: 35, game: 8, social: 32, coding: 25, music: 0 },
+  { age: 22, study: 30, game: 5, social: 35, coding: 28, music: 2 },
+  { age: 24, study: 25, game: 5, social: 38, coding: 30, music: 2 },
+  { age: 25, study: 20, game: 5, social: 40, coding: 30, music: 5 }
+];
+
+const seriesNames = ['social', 'coding', 'game', 'study', 'music'];
+const colors = ['#a7f3d0', '#10b981', '#60a5fa', '#6366f1', '#f472b6'];
+const legendItems = [
+  { name: 'Study', color: '#6366f1' },
+  { name: 'Game', color: '#60a5fa' },
+  { name: 'Social or Family', color: '#a7f3d0' },
+  { name: 'Coding', color: '#10b981' },
+  { name: 'Music', color: '#f472b6' }
+];
 
 // 定义阶段数据
 const stages = reactive([
@@ -96,6 +149,148 @@ const getParticleStyle = (index) => {
     animationDelay: Math.random() * 6 + 's',
     animationDuration: (4 + Math.random() * 4) + 's'
   };
+};
+
+// 创建时间分配图表
+const createTimeChart = () => {
+  if (!chartContainer.value) return;
+  
+  // 检查冷却时间
+  const now = Date.now();
+  if (now - lastChartCreateTime.value < CHART_COOLDOWN) {
+    console.log('图表创建请求被忽略，仍在冷却期内');
+    return;
+  }
+  
+  lastChartCreateTime.value = now;
+  
+  // 清除之前的图表
+  d3.select(chartContainer.value).selectAll('*').remove();
+  
+  const width = 600;
+  const height = 300;
+  const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+  
+  const svg = d3.select(chartContainer.value)
+    .append('svg')
+    .attr('width', width)
+    .attr('height', height)
+    .style('background', 'rgba(255, 255, 255, 0.1)')
+    .style('border-radius', '8px')
+    .style('backdrop-filter', 'blur(10px)');
+  
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+  
+  const g = svg.append('g')
+    .attr('transform', `translate(${margin.left}, ${margin.top})`);
+  
+  // 创建比例尺
+  const x = d3.scaleLinear()
+    .domain(d3.extent(chartData, d => d.age))
+    .range([0, innerWidth]);
+  
+  const y = d3.scaleLinear()
+    .domain([0, 100])
+    .range([innerHeight, 0]);
+  
+  // 创建颜色比例尺
+  const color = d3.scaleOrdinal()
+    .domain(seriesNames)
+    .range(colors);
+  
+  // 创建堆叠数据
+  const stack = d3.stack()
+    .keys(seriesNames)
+    .order(d3.stackOrderNone)
+    .offset(d3.stackOffsetNone);
+  
+  const series = stack(chartData);
+  
+  // 创建区域生成器
+  const area = d3.area()
+    .x(d => x(d.data.age))
+    .y0(d => y(d[0]))
+    .y1(d => y(d[1]))
+    .curve(d3.curveMonotoneX);
+  
+  // 绘制路径并添加动画
+  g.selectAll('.area')
+    .data(series)
+    .enter().append('path')
+    .attr('class', 'area')
+    .attr('d', area)
+    .attr('fill', 'none')
+    .attr('stroke', (d, i) => colors[i])
+    .attr('stroke-width', 2)
+    .each(function(d, i) {
+      const path = d3.select(this);
+      const totalLength = path.node().getTotalLength();
+      
+      path
+        .attr('stroke-dasharray', totalLength + ' ' + totalLength)
+        .attr('stroke-dashoffset', totalLength)
+        .transition()
+        .duration(2000)
+        .delay(i * 300)
+        .ease(d3.easeLinear)
+        .attr('stroke-dashoffset', 0)
+        .on('end', function() {
+          d3.select(this)
+            .transition()
+            .duration(800)
+            .attr('fill', color(d.key))
+            .attr('fill-opacity', 0.7)
+            .attr('stroke', 'none');
+        });
+    });
+  
+  // 添加坐标轴
+  const xAxis = d3.axisBottom(x)
+    .ticks(6)
+    .tickFormat(d => d + ' years');
+  
+  const yAxis = d3.axisLeft(y)
+    .ticks(5)
+    .tickFormat(d => d + '%');
+  
+  g.append('g')
+    .attr('class', 'x-axis')
+    .attr('transform', `translate(0, ${innerHeight})`)
+    .call(xAxis)
+    .selectAll('text')
+    .style('font-size', '10px')
+    .style('fill', '#fff');
+  
+  g.append('g')
+    .attr('class', 'y-axis')
+    .call(yAxis)
+    .selectAll('text')
+    .style('font-size', '10px')
+    .style('fill', '#fff');
+  
+  // 设置轴线颜色
+  g.selectAll('.domain, .tick line')
+    .style('stroke', '#fff')
+    .style('opacity', 0.6);
+  
+  // 添加轴标签
+  g.append('text')
+    .attr('transform', 'rotate(-90)')
+    .attr('y', 0 - margin.left)
+    .attr('x', 0 - (innerHeight / 2))
+    .attr('dy', '1em')
+    .style('text-anchor', 'middle')
+    .style('font-size', '12px')
+    .style('fill', '#fff')
+    .text('Time Percentage (%)');
+  
+  g.append('text')
+    .attr('transform', `translate(${innerWidth / 2}, ${innerHeight + margin.bottom - 5})`)
+    .style('text-anchor', 'middle')
+    .style('font-size', '12px')
+    .style('fill', '#fff')
+    .text('Age');
 };
 
 // 滚动到指定阶段
@@ -159,6 +354,32 @@ onMounted(async () => {
       start: "top top",
       end: () => `+=${validTitleEls.length * 50}%`, // Adjusted for slower transition between titles
       // markers: process.env.NODE_ENV === 'development', // Uncomment for debugging, ensure process.env is available or use true
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const direction = self.direction;
+        
+        // 计算当前应该显示的阶段
+        const totalStages = validTitleEls.length;
+        const stageProgress = progress * totalStages;
+        const currentStage = Math.floor(stageProgress);
+        const stageLocalProgress = stageProgress - currentStage;
+        
+        // 处理图表的显示逻辑（向上滚动时隐藏图表）
+        if (direction === -1 && showTimeChart.value && progress < 0.9) {
+          // 当从图表区域向上滚动时，淡出图表
+          if (timeChartRef.value) {
+            gsap.to(timeChartRef.value, {
+              autoAlpha: 0,
+              y: 50,
+              duration: 0.6,
+              ease: "power2.out",
+              onComplete: () => {
+                showTimeChart.value = false;
+              }
+            });
+          }
+        }
+      }
     }
   });
 
@@ -179,13 +400,43 @@ onMounted(async () => {
       if (index === 0) showScrollHint.value = false;
     }, null, startTime);
 
-    tl.to(titleEl, {
-      autoAlpha: 0,
-      y: -50, // Animates from y:0 to y:-50
-      duration: animationDuration,
-      ease: "power2.in"
-    }, startTime + holdDuration);
+    // 如果不是最后一个阶段，添加淡出动画
+    if (index < validTitleEls.length - 1) {
+      tl.to(titleEl, {
+        autoAlpha: 0,
+        y: -50, // Animates from y:0 to y:-50
+        duration: animationDuration,
+        ease: "power2.in"
+      }, startTime + holdDuration);
+    } else {
+      // 最后一个阶段（"一位生活家"）也添加淡出动画，和前三个标签保持一致
+      tl.to(titleEl, {
+        autoAlpha: 0,
+        y: -50,
+        duration: animationDuration,
+        ease: "power2.in"
+      }, startTime + holdDuration)
+      .call(() => {
+        // 生活家标签淡出后显示图表
+        showTimeChart.value = true;
+        nextTick(() => {
+          if (timeChartRef.value) {
+            gsap.set(timeChartRef.value, { autoAlpha: 0, y: 50 });
+            createTimeChart();
+            gsap.to(timeChartRef.value, {
+              autoAlpha: 1,
+              y: 0,
+              duration: 1.2,
+              ease: "power2.out",
+              delay: 0.3
+            });
+          }
+        });
+      }, null, startTime + holdDuration + animationDuration);
+    }
   });
+  
+  // 移除这部分代码，因为图表动画已经在上面的逻辑中处理了
   
   // 添加键盘事件监听
   window.addEventListener('keydown', handleKeydown);
@@ -453,6 +704,106 @@ onUnmounted(() => {
   }
 }
 
+/* 时间分配图表样式 */
+.time-chart-container {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  opacity: 0;
+  width: 90%;
+  max-width: 800px;
+  text-align: center;
+}
+
+.chart-header {
+  margin-bottom: 30px;
+}
+
+.chart-header h2 {
+  font-family: 'Lora', serif;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: #ffffff;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+}
+
+.chart-header p {
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  color: #e0e0e0;
+  margin: 0;
+  line-height: 1.5;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.chart-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+#stages-chart-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #ffffff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+  .time-chart-container {
+    width: 95%;
+    padding: 0 10px;
+  }
+  
+  .chart-wrapper {
+    padding: 15px;
+  }
+  
+  .chart-header h2 {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+  
+  .chart-header p {
+    font-size: clamp(0.8rem, 3vw, 1rem);
+  }
+  
+  .chart-legend {
+    gap: 15px;
+  }
+  
+  .legend-item {
+    font-size: 12px;
+  }
+}
+
 @media (max-width: 480px) {
   /* .stage-title, .progress-dot adjustments are above */
   .click-hint {
@@ -462,6 +813,27 @@ onUnmounted(() => {
   .click-hint span {
     font-size: clamp(0.5rem, 1.2vw, 0.65rem);
     padding: 3px 6px;
+  }
+  
+  .time-chart-container {
+    width: 98%;
+  }
+  
+  .chart-wrapper {
+    padding: 12px;
+  }
+  
+  .chart-legend {
+    gap: 10px;
+  }
+  
+  .legend-item {
+    font-size: 11px;
+  }
+  
+  .legend-color {
+    width: 14px;
+    height: 14px;
   }
 }
 </style>
