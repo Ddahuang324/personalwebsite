@@ -83,7 +83,7 @@
                     <div class="tutorial-tags">
                       <span v-for="(tag, tagIndex) in tutorial.tags" :key="tagIndex" class="tag">{{ tag }}</span>
                     </div>
-                    <div class="start-button" @click="tutorial.title.includes('C++') ? navigateTo('/learning/cpp') : null">
+                    <div class="start-button" @click="tutorial.title.includes('C++') ? navigateTo('/learning/CppNew') : null">
                       <span>Start Tutorial</span>
                     </div>
                   </div>

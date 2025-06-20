@@ -1,172 +1,618 @@
-<html>
-  <head>
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
-    <link
-      rel="stylesheet"
-      as="style"
-      onload="this.rel='stylesheet'"
-      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700"
-    />
-
-    <title>Stitch Design</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  </head>
-  <body>
-    <div class="relative flex size-full min-h-screen flex-col bg-[#1a1a1a] dark group/design-root overflow-x-hidden" style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'>
-      <div class="layout-container flex h-full grow flex-col">
-        <div class="gap-1 px-6 flex flex-1 justify-center py-5">
-          <div class="layout-content-container flex flex-col w-80">
-            <div class="flex h-full min-h-[700px] flex-col justify-between bg-[#1a1a1a] p-4">
-              <div class="flex flex-col gap-4">
-                <div class="flex flex-col">
-                  <h1 class="text-white text-base font-medium leading-normal">Tech Hub</h1>
-                  <p class="text-[#adadad] text-sm font-normal leading-normal">Explore, Learn, Share</p>
-                </div>
-                <div class="flex flex-col gap-2">
-                  <div class="flex items-center gap-3 px-3 py-2 rounded-xl bg-[#363636]">
-                    <div class="text-white" data-icon="House" data-size="24px" data-weight="fill">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                        <path
-                          d="M224,115.55V208a16,16,0,0,1-16,16H168a16,16,0,0,1-16-16V168a8,8,0,0,0-8-8H112a8,8,0,0,0-8,8v40a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V115.55a16,16,0,0,1,5.17-11.78l80-75.48.11-.11a16,16,0,0,1,21.53,0,1.14,1.14,0,0,0,.11.11l80,75.48A16,16,0,0,1,224,115.55Z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <p class="text-white text-sm font-medium leading-normal">Home</p>
-                  </div>
-                  <div class="flex items-center gap-3 px-3 py-2">
-                    <div class="text-white" data-icon="Article" data-size="24px" data-weight="regular">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                        <path
-                          d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM184,96a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,96Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,128Zm0,32a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,160Z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <p class="text-white text-sm font-medium leading-normal">Articles</p>
-                  </div>
-                  <div class="flex items-center gap-3 px-3 py-2">
-                    <div class="text-white" data-icon="Video" data-size="24px" data-weight="regular">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                        <path
-                          d="M164.44,105.34l-48-32A8,8,0,0,0,104,80v64a8,8,0,0,0,12.44,6.66l48-32a8,8,0,0,0,0-13.32ZM120,129.05V95l25.58,17ZM216,40H40A16,16,0,0,0,24,56V168a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,128H40V56H216V168Zm16,40a8,8,0,0,1-8,8H32a8,8,0,0,1,0-16H224A8,8,0,0,1,232,208Z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <p class="text-white text-sm font-medium leading-normal">Tutorials</p>
-                  </div>
-                  <div class="flex items-center gap-3 px-3 py-2">
-                    <div class="text-white" data-icon="Hash" data-size="24px" data-weight="regular">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                        <path
-                          d="M224,88H175.4l8.47-46.57a8,8,0,0,0-15.74-2.86l-9,49.43H111.4l8.47-46.57a8,8,0,0,0-15.74-2.86L95.14,88H48a8,8,0,0,0,0,16H92.23L83.5,152H32a8,8,0,0,0,0,16H80.6l-8.47,46.57a8,8,0,0,0,6.44,9.3A7.79,7.79,0,0,0,80,224a8,8,0,0,0,7.86-6.57l9-49.43H144.6l-8.47,46.57a8,8,0,0,0,6.44,9.3A7.79,7.79,0,0,0,144,224a8,8,0,0,0,7.86-6.57l9-49.43H208a8,8,0,0,0,0-16H163.77l8.73-48H224a8,8,0,0,0,0-16Zm-76.5,64H99.77l8.73-48h47.73Z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <p class="text-white text-sm font-medium leading-normal">Topics</p>
-                  </div>
-                  <div class="flex items-center gap-3 px-3 py-2">
-                    <div class="text-white" data-icon="MagnifyingGlass" data-size="24px" data-weight="regular">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                        <path
-                          d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <p class="text-white text-sm font-medium leading-normal">Search</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-            <h2 class="text-white tracking-light text-[28px] font-bold leading-tight px-4 text-left pb-3 pt-5">Latest Articles</h2>
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4 max-h-[300px] overflow-hidden">
-              <div class="flex flex-col gap-3 pb-3">
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
-                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDG_1gR5_D68oE9Jk_gKVAPqv7Amd14Ov_r_X1D-A5Zi_0pv9jkREFqCduVdnKaSI87g-4Z5dLaC_F9YtncfOux8opcKtMxaiVW1doSBdyMyLPUi11kMSBuuOZZDBHMAil5k6ZPLLO8PLkEmN4gfoJwNxaQY_Lwq0e-Z_AIPZB-TzHxaJiPh_SiySu7uj4l3LOz5cYPKOnc4byYEY4dRwTgYFxjIjIiw-jIPQa6Thk-RPYO-8fexVdjMsvMH6HCjXxHlO1jxQXXyWU");'
-                ></div>
-                <div>
-                  <p class="text-white text-base font-medium leading-normal">Understanding Cloud Computing</p>
-                  <p class="text-[#adadad] text-sm font-normal leading-normal">A comprehensive guide to cloud services and their benefits.</p>
-                </div>
-              </div>
-              <div class="flex flex-col gap-3 pb-3">
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
-                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCu5ntp5qj9pf64Ts-rIgoLOeM1WTT1rgxDQA-pA1vd8pfupaUAVFABIQY0xus855Shv4AQA-0TeAee1UPF18LuaBf6mwwvXK79A4FB0Y4-meKAKLd18oUA8i5k6YG6_0mSnaSEYuxREuijNpcPxztvzrAKVQxANOmYSAEI1VxJ4L_8Sv5seSOgzr0B4H6kLDVQKPAcH_QMBfkp4uOMWbg38LaZeQNFbJzRnjMqxhBY8zo5Namsa94aB0ai89vU8z3cgddNHd02K58");'
-                ></div>
-                <div>
-                  <p class="text-white text-base font-medium leading-normal">Mastering Python for Data Analysis</p>
-                  <p class="text-[#adadad] text-sm font-normal leading-normal">Learn Python's powerful libraries for data manipulation and analysis.</p>
-                </div>
-              </div>
-              <div class="flex flex-col gap-3 pb-3">
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
-                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBFmvlF_Otdr_O-UfYRIBpnpUVLv9g4RqSzQyxfFf87ajq17_bHeF1xvDz_7HwuETTZYEbMcfhhNhXjATriRCj-1w3KNY0EyX6S9xsQBooa3n-WbRr8JgWy_aEsC9XpLLnsdGPen2HaJh9vGqPdqd32iEFriBIdhZNr__g9GxDYcHeEK4Q3awyuWt18vdW3V4MsV53a7U_sDLic-PILHZhz9lLrg9llc7rkHJZtH-v1TdDQ_JuJeYAripaZHVSHs-1Z6TeATW6n9l8");'
-                ></div>
-                <div>
-                  <p class="text-white text-base font-medium leading-normal">Securing Your Home Network</p>
-                  <p class="text-[#adadad] text-sm font-normal leading-normal">Protect your digital life with these essential security tips.</p>
-                </div>
-              </div>
-              <div class="flex flex-col gap-3 pb-3">
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
-                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDjviToMaZthFmY3BV1CDOOxjNuP4XHIQrXOeeJ6IX3e7SA6-NH-YuCSdWZeCFRR-UqWnyFTxaiPl0BaUB_FTTIoP2Nzb0IuhcaKPFlyIX6Bk5fK7BSO29G2n-9vSDY1tHZZxWGnjXRtpaBvx2UXeMGD6jvsEbRkwvJewyvRoxpz22YVLtxeHA3jY_dFa9OLF1ZvXwJcthIzxCSAXq0Oeu3eFqhB6lVj8mxu4nacvZdLAXZuUTdshXLil9tmfvjxh70Borl1wGt7bI");'
-                ></div>
-                <div>
-                  <p class="text-white text-base font-medium leading-normal">The Future of AI in Software Development</p>
-                  <p class="text-[#adadad] text-sm font-normal leading-normal">Explore the transformative impact of AI on software creation.</p>
-                </div>
-              </div>
-            </div>
-            <h2 class="text-white tracking-light text-[28px] font-bold leading-tight px-4 text-left pb-3 pt-5">Popular Topics</h2>
-            <div class="flex gap-3 p-3 flex-wrap pr-4">
-              <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-[#363636] pl-4 pr-4">
-                <p class="text-white text-sm font-medium leading-normal">Cloud Computing</p>
-              </div>
-              <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-[#363636] pl-4 pr-4">
-                <p class="text-white text-sm font-medium leading-normal">Python</p>
-              </div>
-              <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-[#363636] pl-4 pr-4">
-                <p class="text-white text-sm font-medium leading-normal">Cybersecurity</p>
-              </div>
-              <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-[#363636] pl-4 pr-4">
-                <p class="text-white text-sm font-medium leading-normal">AI</p>
-              </div>
-              <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-[#363636] pl-4 pr-4">
-                <p class="text-white text-sm font-medium leading-normal">Software Development</p>
-              </div>
-              <div class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-[#363636] pl-4 pr-4">
-                <p class="text-white text-sm font-medium leading-normal">Networking</p>
-              </div>
-            </div>
-            <h2 class="text-white tracking-light text-[28px] font-bold leading-tight px-4 text-left pb-3 pt-5">Featured Tutorials</h2>
-            <div class="p-4 @container">
-              <div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start">
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
-                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLgCTH-ZQ2BE3UplKXjEiXoQVpP4wRYoSEh8F5GdD8B38Aya9V6taKKWe8XEFODTaNSMdR0Mui7vo7o_2e5ZrDbrQTo1lKotfkAk00L8Kd25YhaP7SWDI3HOG3M3fWiVg80bb-h_NnVufP2KsetH692xQzjULBC5iqQed0TMNuT_MfBgad4H0BB82DgciaZYJ_P4Ch3P1mqnpU9LChkHX9I2LPsh6iz-IvvqzJHmzGHISr0aA_hGBlDestXCTuik5ejkPPbZB0HME");'
-                ></div>
-                <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4">
-                  <p class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Building a Full-Stack Application with React and Node.js</p>
-                  <div class="flex items-end gap-3 justify-between">
-                    <p class="text-[#adadad] text-base font-normal leading-normal">A step-by-step tutorial on creating a modern web application from scratch.</p>
-                    <button
-                      class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-black text-white text-sm font-medium leading-normal"
-                    >
-                      <span class="truncate">Start Tutorial</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>C++ CodeCraft: Minimalist Edition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Sharp" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Roboto+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+    :root {
+      --bg-primary: #121212;
+      --bg-secondary: #1E1E1E;
+      --text-primary: #E0E0E0;
+      --text-secondary: #A0A0A0;
+      --accent-primary: #4CAF50;
+      --border-color: #333333;
+      --code-bg: #1A1A1A;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    .font-roboto-mono {
+      font-family: 'Roboto Mono', monospace;
+    }
+    .nav-link {
+      padding: 0.5rem 1rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: color 0.2s ease;
+      border-bottom: 2px solid transparent;
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--accent-primary);
+    }
+    .nav-link .material-icons {
+      font-size: 1.1rem;
+      margin-right: 0.25rem;
+      vertical-align: text-bottom;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-primary {
+      background-color: var(--accent-primary);
+      color: var(--bg-primary);
+      border: 1px solid var(--accent-primary);
+    }
+    .btn-primary:hover {
+      background-color: transparent;
+      color: var(--accent-primary);
+    }
+    .btn-secondary {
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+    .code-snippet-bg {
+      background: var(--code-bg);
+      padding: 1.25rem;
+      border-radius: 0.375rem;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.875rem;
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+    }
+    .code-snippet-bg pre {
+      margin: 0;
+    }
+    .code-keyword {
+      color: var(--accent-primary);
+    }
+    .code-type {
+      color: #82AAFF;
+    }
+    .code-literal {
+      color: #C3E88D;
+    }
+    .code-comment {
+      color: #6A737D;
+    }
+    .section-title {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      text-align: center;
+      color: var(--text-primary);
+    }
+    .feature-item {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .feature-item:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--accent-primary);
+    }
+    .module-card-minimal {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 1.5rem;display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+      width: 100%;margin-left: auto;
+      margin-right: auto;
+      height: 100%;}
+    .module-card-minimal:hover {
+      border-color: var(--accent-primary);
+    }
+    .module-title-minimal {
+      font-size: 1.25rem;font-weight: 600;
+      margin-bottom: 0.75rem;color: var(--text-primary);
+    }
+    .module-description-minimal {
+      font-size: 0.9rem;color: var(--text-secondary);
+      flex-grow: 1;
+      margin-bottom: 1rem;}
+    .module-cta-minimal {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.6rem 1.2rem;color: var(--accent-primary);
+      border-radius: 0.375rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      border: 1px solid var(--accent-primary);
+      align-self: flex-start;
+      margin-top: auto;}
+    .module-cta-minimal:hover {
+      background-color: var(--accent-primary);
+      color: var(--bg-primary);
+    }
+    footer {
+      background-color: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+    }
+    .page-flip-container {
+      perspective: 1500px;
+      position: relative;
+      width: 100%;
+      min-height: 550px;}
+    .page-flip-content {
+      width: 100%;
+      display: block;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    .page-flip-page {
+      display: grid;grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));gap: 1.5rem;width: 100%;
+      backface-visibility: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .page-flip-page.active {
+      position: relative;
+      z-index: 1;
+    }
+    .page-flip-page-next {
+      transform: rotateY(180deg);
+    }
+    .page-flip-content.flipped .page-flip-page-current {
+      transform: rotateY(-180deg);
+    }
+    .page-flip-content.flipped .page-flip-page-next {
+      transform: rotateY(0deg);
+    }
+    .pagination-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2.5rem;
+      gap: 1rem;
+    }
+    .pagination-btn {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+    .pagination-btn:hover:not(:disabled) {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pagination-btn .material-icons-outlined {
+      font-size: 1.25rem;
+    }
+    .page-indicator {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    .subtopics-list {
+      list-style: disc;
+      list-style-position: inside;
+      padding-left: 0.5rem;
+      margin-top: 0.75rem;color: var(--text-secondary);
+      font-size: 0.85rem;line-height: 1.6;
+    }
+    .subtopics-list li {
+      margin-bottom: 0.3rem;
+    }
+    .toc-container {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    .toc-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .toc-list {
+      list-style-type: none;
+      padding-left: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out;
+    }
+    .toc-list.expanded {
+      max-height: 1000px;}
+    .toc-list li {
+      margin-bottom: 0.5rem;
+    }
+    .toc-list a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      font-size: 0.9rem;
+    }
+    .toc-list a:hover {
+      color: var(--accent-primary);
+    }
+    .toc-icon {
+        transition: transform 0.3s ease;
+    }
+    .toc-icon.rotate-180 {
+        transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body class="antialiased">
+<header class="fixed top-0 left-0 right-0 z-50 bg-[var(--bg-primary)] bg-opacity-90 backdrop-blur-sm border-b border-[var(--border-color)] transition-all duration-300" id="main-header">
+<div class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+<a class="nav-link active" href="#"><span class="material-icons">arrow_back</span>Back</a>
+<a class="font-roboto-mono text-xl font-medium text-[var(--text-primary)] hidden sm:block" href="#">
+        C++ <span class="text-[var(--accent-primary)]">CodeCraft</span>
+</a>
+<button class="md:hidden text-[var(--text-primary)]">
+<span class="material-icons text-2xl">menu</span>
+</button>
+</div>
+</header>
+<section class="min-h-screen flex flex-col items-center justify-center text-center pt-24 pb-16 px-4 sm:px-6" id="home">
+<h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
+      Learn <span class="text-[var(--accent-primary)]">C++</span> Simply.
+    </h1>
+<p class="text-lg sm:text-xl text-[var(--text-secondary)] max-w-2xl mb-10">
+      A focused and streamlined path to mastering C++. Dive into clean code, essential concepts, and practical application.
+    </p>
+<div class="flex flex-col sm:flex-row gap-4 mb-12">
+<a class="btn btn-primary" href="#modules">
+        Start Learning
+        <span class="material-icons-outlined ml-2 text-lg">arrow_forward</span>
+</a>
+<a class="btn btn-secondary" href="#features">
+        Why This Approach?
+      </a>
+</div>
+<div class="w-full max-w-2xl">
+<div class="code-snippet-bg">
+<pre><code class="language-cpp"><span class="code-comment">// Minimal C++ Example</span>
+<span class="code-keyword">#include</span> <span class="code-literal">&lt;iostream&gt;</span>
+<span class="code-type">int</span> <span class="code-keyword">main</span>() {
+    <span class="code-type">std::cout</span> &lt;&lt; <span class="code-literal">"Hello, Minimalist Coder!"</span> &lt;&lt; <span class="code-type">std::endl</span>;
+    <span class="code-keyword">return</span> <span class="code-literal">0</span>;
+}</code></pre>
+</div>
+</div>
+</section>
+<section class="py-16 md:py-20 bg-[var(--bg-secondary)]" id="features">
+<div class="container mx-auto px-4 sm:px-6">
+<h2 class="section-title">Core Principles</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="feature-item">
+<span class="material-icons-outlined feature-icon">lightbulb</span>
+<h3 class="text-xl font-semibold text-[var(--text-primary)] mb-2">Focus on Essentials</h3>
+<p class="text-[var(--text-secondary)] text-sm">Master fundamental concepts without unnecessary complexity. Build a strong C++ foundation.</p>
+</div>
+<div class="feature-item">
+<span class="material-icons-outlined feature-icon">code</span>
+<h3 class="text-xl font-semibold text-[var(--text-primary)] mb-2">Clean Code First</h3>
+<p class="text-[var(--text-secondary)] text-sm">Learn to write readable, maintainable, and efficient C++ from day one.</p>
+</div>
+<div class="feature-item">
+<span class="material-icons-outlined feature-icon">construction</span>
+<h3 class="text-xl font-semibold text-[var(--text-primary)] mb-2">Practical Application</h3>
+<p class="text-[var(--text-secondary)] text-sm">Apply knowledge through clear examples and targeted exercises relevant to modern C++.</p>
+</div>
+</div>
+<div class="toc-container" id="tocContainer">
+<div class="toc-title" id="tocToggle">
+<span>Table of Contents (15 Chapters)</span>
+<span class="material-icons-outlined toc-icon">expand_more</span>
+</div>
+<ul class="toc-list" id="tocList">
+</ul>
+</div>
+</div>
+</section>
+<section class="py-16 md:py-20 bg-[var(--bg-primary)]" id="modules">
+<div class="container mx-auto px-4 sm:px-6">
+<h2 class="section-title">Learning Path</h2>
+<div class="page-flip-container">
+<div class="page-flip-content" id="pageFlipContent">
+</div>
+</div>
+<div class="pagination-controls">
+<button class="pagination-btn" disabled="" id="prevPageBtn">
+<span class="material-icons-outlined mr-1">arrow_back_ios</span> Prev
+        </button>
+<span class="page-indicator" id="pageIndicator">Page 1 of X</span>
+<button class="pagination-btn" id="nextPageBtn">
+          Next <span class="material-icons-outlined ml-1">arrow_forward_ios</span>
+</button>
+</div>
+</div>
+</section>
+<section class="py-16 md:py-20 bg-[var(--bg-secondary)]" id="community">
+<div class="container mx-auto px-4 sm:px-6 text-center">
+<h2 class="section-title">Join the Conversation</h2>
+<p class="text-lg text-[var(--text-secondary)] max-w-xl mx-auto mb-8">
+        Connect with like-minded learners. Share insights, ask questions, and grow together in a supportive environment.
+      </p>
+<a class="btn btn-primary" href="#">
+<span class="material-icons-outlined mr-2">forum</span> Visit Community Forum
+      </a>
+</div>
+</section>
+<footer class="py-10">
+<div class="container mx-auto px-4 sm:px-6 text-center">
+<p class="font-roboto-mono text-md text-[var(--text-primary)] mb-1">C++ CodeCraft</p>
+<p class="text-sm text-[var(--text-secondary)]">© 2024 Minimalist C++. All rights reserved.</p>
+<p class="text-xs text-gray-500 mt-3">Designed for clarity and focus in C++ education.</p>
+</div>
+</footer>
+<script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetElement = document.querySelector(this.getAttribute('href'));
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        if (this.classList.contains('nav-link')) {
+          this.classList.add('active');
+        }
+      });
+    });
+    const header = document.getElementById('main-header');
+    let lastScrollTop = 0;
+    window.addEventListener("scroll", function() {
+      let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScroll > lastScrollTop && currentScroll > header.offsetHeight) {
+        header.style.top = `-${header.offsetHeight}px`;
+      } else {
+        header.style.top = "0";
+      }
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+      if (window.pageYOffset > 20) {
+        header.classList.add('shadow-md');
+      } else {
+        header.classList.remove('shadow-md');
+      }
+    }, false);
+    const modulesData = [{
+      title: "1. Basic Language Introduction",
+      description: "History, characteristics, and core syntax of C++. Get familiar with your first C++ program.",
+      subtopics: ["Understanding C++ History", "Key Features of C++", "Your First 'Hello World' Program", "Basic Syntax Rules"]
+    }, {
+      title: "2. Environment Configuration",
+      description: "Setting up your C++ development environment: compilers (GCC, Clang, MSVC) and IDEs (VS Code, CLion).",
+      subtopics: ["Choosing a Compiler (GCC, Clang, MSVC)", "Setting up VS Code for C++", "Configuring CLion", "Troubleshooting Common Setup Issues"]
+    }, {
+      title: "3. Basic Operations",
+      description: "Variables, constants, data types (int, float, char), operators (arithmetic, logical, bitwise), and expressions.",
+      subtopics: ["Declaring and Initializing Variables", "Understanding Constants", "Common Data Types: int, float, char, bool", "Arithmetic, Logical, and Bitwise Operators", "Operator Precedence"]
+    }, {
+      title: "4. Basic Control Statements",
+      description: "Conditional (if-else, switch) and looping (for, while, do-while) statements for program flow.",
+      subtopics: ["If-Else Statements", "Switch-Case Statements", "For Loops", "While and Do-While Loops", "Break and Continue Statements"]
+    }, {
+      title: "5. Functions",
+      description: "Defining and calling functions, parameters, return values, function overloading, and scope.",
+      subtopics: ["Defining Functions", "Function Parameters and Arguments", "Return Values", "Function Overloading", "Variable Scope and Lifetime"]
+    }, {
+      title: "6. Data Types",
+      description: "Arrays, strings, structures, unions, enumerations. Building complex data representations.",
+      subtopics: ["Working with Arrays", "Introduction to std::string", "Defining and Using Structures (structs)", "Understanding Unions", "Enumerated Types (enums)"]
+    }, {
+      title: "7. Pointers and References",
+      description: "Understanding memory addresses, pointer arithmetic, reference variables, and their applications.",
+      subtopics: ["What are Pointers?", "Pointer Arithmetic", "References vs Pointers", "Null Pointers and Dangling Pointers", "Pointers and Arrays"]
+    }, {
+      title: "8. Object-Oriented Programming",
+      description: "Classes, objects, encapsulation, inheritance, polymorphism. Core OOP principles in C++.",
+      subtopics: ["Introduction to OOP Concepts", "Defining Classes and Creating Objects", "Encapsulation: Public, Private, Protected", "Inheritance: Base and Derived Classes", "Polymorphism: Virtual Functions"]
+    }, {
+      title: "9. Advanced Memory Management",
+      description: "Dynamic memory allocation (new, delete), smart pointers (unique_ptr, shared_ptr, weak_ptr).",
+      subtopics: ["Dynamic Memory with `new` and `delete`", "Introduction to Smart Pointers", "Using `std::unique_ptr`", "Using `std::shared_ptr`", "Understanding `std::weak_ptr`"]
+    }, {
+      title: "10. STL Standard Template Library",
+      description: "Containers (vector, list, map), iterators, algorithms. Leveraging powerful pre-built components.",
+      subtopics: ["Overview of STL", "Sequence Containers: `std::vector`, `std::list`, `std::deque`", "Associative Containers: `std::map`, `std::set`", "Iterators", "Common STL Algorithms"]
+    }, {
+      title: "11. Compilers",
+      description: "Deeper dive into compiler concepts, optimization flags, and the compilation process.",
+      subtopics: ["The Compilation Pipeline", "Common Compiler Flags (Optimization, Warnings)", "Linking and Object Files", "Precompiled Headers", "Cross-Compilation Basics"]
+    }, {
+      title: "12. C++ Program Organization",
+      description: "Header files, source files, namespaces, build systems (Make, CMake). Structuring larger projects.",
+      subtopics: ["Header Files and Source Files", "Using Namespaces Effectively", "Introduction to Makefiles", "Introduction to CMake", "Organizing Larger C++ Projects"]
+    }, {
+      title: "13. Lambda Expressions",
+      description: "Anonymous functions for concise and powerful inline operations. Capturing variables.",
+      subtopics: ["Syntax of Lambda Expressions", "Capturing Variables by Value and Reference", "Generic Lambdas (C++14)", "Lambdas in STL Algorithms"]
+    }, {
+      title: "14. Concurrency & Multithreading",
+      description: "std::thread, mutexes, condition variables, async. Building parallel applications.",
+      subtopics: ["Creating and Managing Threads with `std::thread`", "Mutual Exclusion with `std::mutex`", "Condition Variables for Synchronization", "Asynchronous Operations with `std::async`", "Atomic Operations"]
+    }, {
+      title: "15. Template Metaprogramming",
+      description: "Advanced techniques for compile-time computation and code generation using templates.",
+      subtopics: ["Introduction to Templates", "Function Templates", "Class Templates", "Basic Template Metaprogramming Techniques", "Type Traits"]
+    }];
+    const pageFlipContent = document.getElementById('pageFlipContent');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const itemsPerPage = 2; // Changed from 1 to 2
+    let currentPage = 0;
+    const totalPages = Math.ceil(modulesData.length / itemsPerPage);
+    function createModuleCard(module) {
+      let subtopicsHTML = '';
+      if (module.subtopics && module.subtopics.length > 0) {
+        subtopicsHTML = `
+          <ul class="subtopics-list">
+            ${module.subtopics.map(sub => `<li>${sub}</li>`).join('')}
+          </ul>
+        `;
+      }
+      return `
+        <div class="module-card-minimal">
+          <h3 class="module-title-minimal">${module.title}</h3>
+          <p class="module-description-minimal">${module.description}</p>
+          ${subtopicsHTML}
+          <a class="module-cta-minimal" href="#module-${module.title.split('.')[0]}">
+            Explore Module <span class="material-icons-outlined ml-1 text-sm">chevron_right</span>
+          </a>
         </div>
-      </div>
-    </div>
-  </body>
-</html>
+      `;
+    }
+    function renderPage(pageIndex, isNext = false) {
+      const start = pageIndex * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageModules = modulesData.slice(start, end);
+      let newPageHTML = '<div class="page-flip-page ' + (isNext ? 'page-flip-page-next' : 'page-flip-page-current active') + '">';
+      pageModules.forEach((module) => {
+        newPageHTML += createModuleCard(module);
+      });
+      newPageHTML += '</div>';
+      if (isNext) {
+        const currentPageElement = pageFlipContent.querySelector('.page-flip-page-current');
+        if (currentPageElement) {
+          currentPageElement.classList.remove('active');
+        }
+        pageFlipContent.insertAdjacentHTML('beforeend', newPageHTML);
+        setTimeout(() => {
+          pageFlipContent.classList.add('flipped');
+        }, 50);
+        setTimeout(() => {
+          if (currentPageElement) {
+            currentPageElement.remove();
+          }
+          const nextElement = pageFlipContent.querySelector('.page-flip-page-next');
+          if (nextElement) {
+            nextElement.classList.remove('page-flip-page-next');
+            nextElement.classList.add('page-flip-page-current', 'active');
+          }
+          pageFlipContent.classList.remove('flipped');
+          updateControls();
+        }, 850);
+      } else {
+        const currentPageElement = pageFlipContent.querySelector('.page-flip-page-current');
+        if (currentPageElement) {
+          currentPageElement.classList.remove('active');
+          currentPageElement.classList.add('page-flip-page-next');
+        }
+        pageFlipContent.insertAdjacentHTML('afterbegin', newPageHTML);
+        const newCurrentPage = pageFlipContent.querySelector('.page-flip-page-current.active');
+        if (newCurrentPage && currentPageElement) {
+          newCurrentPage.style.transform = 'rotateY(-180deg)';
+        }
+        setTimeout(() => {
+          if (newCurrentPage) {
+            newCurrentPage.style.transform = 'rotateY(0deg)';
+          }
+          if (currentPageElement) {
+            currentPageElement.style.transform = 'rotateY(180deg)';
+          }
+        }, 50);
+        setTimeout(() => {
+          if (currentPageElement) {
+            currentPageElement.remove();
+          }
+          updateControls();
+        }, 850);
+      }
+    }
+    function updateControls() {
+      prevPageBtn.disabled = currentPage === 0;
+      nextPageBtn.disabled = currentPage === totalPages - 1;
+      const firstChapter = currentPage * itemsPerPage + 1;
+      const lastChapter = Math.min((currentPage + 1) * itemsPerPage, modulesData.length);
+      if (itemsPerPage > 1 && lastChapter > firstChapter) {
+         pageIndicator.textContent = `Chapters ${firstChapter}-${lastChapter} of ${modulesData.length}`;
+      } else {
+         pageIndicator.textContent = `Chapter ${firstChapter} of ${modulesData.length}`;
+      }
+    }
+    nextPageBtn.addEventListener('click', () => {
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+        renderPage(currentPage, true);
+      }
+    });
+    prevPageBtn.addEventListener('click', () => {
+      if (currentPage > 0) {
+        currentPage--;
+        renderPage(currentPage, false);
+      }
+    });
+    // Table of Contents
+    const tocToggle = document.getElementById('tocToggle');
+    const tocList = document.getElementById('tocList');
+    const tocIcon = tocToggle.querySelector('.toc-icon');
+    modulesData.forEach((module, index) => {
+      const listItem = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = `#module-page-${Math.floor(index / itemsPerPage)}`;
+      link.textContent = module.title;
+      link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetPage = Math.floor(index / itemsPerPage);
+          const isNextNav = targetPage > currentPage;
+          currentPage = targetPage;
+          renderPage(currentPage, isNextNav);
+          tocList.classList.remove('expanded');
+          tocIcon.classList.remove('rotate-180');
+          const modulesSection = document.getElementById('modules');
+          if (modulesSection) {
+            modulesSection.scrollIntoView({ behavior: 'smooth' });
+          }
+      });
+      listItem.appendChild(link);
+      tocList.appendChild(listItem);
+    });
+    tocToggle.addEventListener('click', () => {
+      tocList.classList.toggle('expanded');
+      tocIcon.classList.toggle('rotate-180');
+    });
+    // Initial render
+    renderPage(currentPage);
+  </script>
+</body></html>
