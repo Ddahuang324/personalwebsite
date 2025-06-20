@@ -7,7 +7,7 @@
     </div>
     <div class="fullscreen-menu" :class="{ 'is-visible': modelValue }">
       <nav>
-        <NuxtLink to="/study" @click="toggleMenu">Learning</NuxtLink>
+        <NuxtLink to="/study1" @click="toggleMenu">Learning</NuxtLink>
         <a @click="toggleMenuAndScroll('moments-section')">Moments</a>
         <a @click="toggleMenuAndScroll('about-me-section')">About Me</a>
         <a @click="toggleMenuAndScroll('experience-section')">Experience</a>
